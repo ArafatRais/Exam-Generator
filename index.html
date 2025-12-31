@@ -606,6 +606,7 @@
                 1. SBAQ: Must include 5 options (A-E). "correctAnswer" MUST be the EXACT option text string.
                 2. VSAQ: 1-4 words max answer.
                 ${saqInstruction}
+                CRITICAL SAQ RULE: The number of items in the 'model_answer' array MUST exactly match the 'marks' for that part. (e.g. If marks=3, provide exactly 3 marking points).
                 ${styleInstruction}
                 JSON FORMAT ONLY:
                 [
@@ -1002,7 +1003,6 @@
                 <h3>1. Initial Setup</h3>
                 <p>This app requires a <strong>Gemini API Key</strong> to function. It's free and easy to get:</p>
                 <ul>
-                    <li><a href="https://support.google.com/accounts?p=verify_age&sjid=2239933336911860722-EU" target="_blank" class="highlight">Verify your age to Google</a> if you haven't already.</li>
                     <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" class="highlight">Google AI Studio</a>.</li>
                     <li>Sign in with your Google account.</li>
                     <li>Click the blue <strong>"Get API key"</strong> button.</li>
