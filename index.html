@@ -335,8 +335,11 @@
     }
     initTheme();
 
-    // Default API Key
-    document.getElementById('api-key').value = ''; 
+    // Init API Key (Auto-Load)
+    const savedKey = localStorage.getItem('pom_api_key');
+    if (savedKey) {
+        document.getElementById('api-key').value = savedKey;
+    }
 
     const VALID_TAGS = ["Molecular Biology of the Cell", "Haematology", "Immunology & Infection", "Genetics"];
     const VALID_TYPES = ["SBAQ", "VSAQ", "SAQ"];
@@ -541,6 +544,12 @@
                 if (saqN > 0) gtag('event', 'gen_saq', { 'event_category': 'Exam', 'value': saqN });
             }
 
+            // AUTO-SAVE API KEY
+            const key = document.getElementById('api-key').value;
+            if (key) {
+                localStorage.setItem('pom_api_key', key);
+            }
+
             let reviewQuestions = [];
             if (mixErrors) {
                 const errors = getErrors();
@@ -608,7 +617,7 @@
                 const parts = [{text: prompt}];
                 if(notes) parts.push({text: "NOTES:\n"+notes});
                 parts.push(...fileParts);
-                const key = document.getElementById('api-key').value;
+                // Key is already retrieved above
                 const model = document.getElementById('model-select').value;
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
                     method: 'POST',
@@ -991,8 +1000,15 @@
             
             <div class="instruction-section">
                 <h3>1. Initial Setup</h3>
-                <p>This app requires a <strong>Gemini API Key</strong> to function. You can get one for free from Google AI Studio.</p>
-                <p>Paste the key into the "API Key" field on the dashboard. </p>
+                <p>This app requires a <strong>Gemini API Key</strong> to function. It's free and easy to get:</p>
+                <ul>
+                    <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" class="highlight">Google AI Studio</a>.</li>
+                    <li>Sign in with your Google account.</li>
+                    <li>Click the blue <strong>"Get API key"</strong> button.</li>
+                    <li>Click <strong>"Create API key"</strong>.</li>
+                    <li>Copy the long code (starts with "AIza...") and paste it into the "API Key" box on the dashboard.</li>
+                </ul>
+                <p><em>(Your key will be saved automatically for next time!)</em></p>
             </div>
             
             <div class="instruction-section">
