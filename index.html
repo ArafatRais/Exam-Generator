@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Principles of Medicine Exam Generator v6.4</title>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YOUR-ID-HERE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-YOUR-ID-HERE');
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --brand-primary: #002147;
+            --brand-secondary: #005bb5;
+            --accent: #D4AF37;
+            --bg-body: #f4f6f9;
+            --bg-card: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #6c757d;
+            --border-subtle: #e9ecef;
+            --shadow-card: 0 4px 20px rgba(0,0,0,0.06);
+            
+            --success-bg: #d1e7dd; --success-text: #0f5132;
+            --error-bg: #f8d7da; --error-text: #842029;
+            --flag-bg: #fff3cd; --flag-text: #856404;
+        }
+
+        [data-theme="dark"] {
+            --brand-primary: #3b82f6;
+            --brand-secondary: #60a5fa;
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #e2e8f0;
+            --text-sub: #94a3b8;
+            --border-subtle: #333;
+            --success-bg: #064e3b; --success-text: #6ee7b7;
+            --error-bg: #7f1d1d; --error-text: #fca5a5;
+            --flag-bg: #451a03; --flag-text: #fcd34d;
+        }
+
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; transition: all 0.3s ease; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-wrapper { max-width: 900px; margin: 0 auto; position: relative; width: 100%; flex: 1; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { margin: 0; color: var(--brand-primary); font-weight: 800; letter-spacing: -0.5px; }
+        
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .icon-btn { background: var(--bg-card); border: 1px solid var(--border-subtle); color: var(--text-main); font-size: 1.2rem; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: 0.2s; box-shadow: var(--shadow-card); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;}
+        .icon-btn:hover { transform: translateY(-2px); border-color: var(--brand-primary); }
+
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--bg-card); padding: 20px; border-radius: 12px; box-shadow: var(--shadow-card); border: 1px solid var(--border-subtle); text-align: center; }
+        .stat-value { font-size: 2rem; font-weight: 800; color: var(--brand-primary); display: block; }
+        .stat-label { font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+
+        .panel { background: var(--bg-card); padding: 25px; border-radius: 16px; box-shadow: var(--shadow-card); margin-bottom: 25px; border: 1px solid var(--border-subtle); animation: fadeIn 0.5s ease-out; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--brand-primary); }
+        input, select, textarea { width: 100%; padding: 12px 15px; border-radius: 8px; border: 2px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); font-size: 1rem; box-sizing: border-box; }
+        input:focus, textarea:focus, select:focus { border-color: var(--brand-primary); outline: none; }
+        
+        textarea { resize: none; overflow-y: hidden; }
+
+        .drop-zone { border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(0,0,0,0.01); }
+        .drop-zone:hover { border-color: var(--brand-primary); background: rgba(0,33,71,0.03); }
+        .file-chip { display: inline-block; background: var(--border-subtle); padding: 4px 10px; border-radius: 15px; margin: 4px; font-size: 0.8rem; }
+
+        .btn { padding: 14px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; width: 100%; transition: transform 0.1s; }
+        .btn-primary { background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,33,71,0.3); }
+        .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); width: auto; padding: 8px 16px; font-size: 0.9rem; margin: 2px; }
+        .btn-secondary:hover { border-color: var(--brand-secondary); color: var(--brand-primary); }
+        .btn-secondary.active { background: var(--brand-primary); color: white; border-color: var(--brand-primary); }
+
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--brand-primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .q-card { background: var(--bg-card); padding: 30px; border-radius: 12px; box-shadow: var(--shadow-card); margin-bottom: 25px; border-left: 5px solid transparent; scroll-margin-top: 100px; }
+        .q-card.flagged { border-left-color: var(--accent); }
+        .q-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; background: var(--border-subtle); color: var(--text-sub); margin-right: 5px; cursor: pointer; transition: 0.2s; }
+        .badge:hover { opacity: 0.8; transform: scale(1.05); }
+        .badge.hidden-tag { display: none; }
+
+        .flag-btn { background: none; border: none; cursor: pointer; color: var(--text-sub); font-size: 1.2rem; }
+        .flag-btn.active { color: var(--accent); }
+
+        /* NAV SIDEBAR */
+        .nav-sidebar { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 90; background: var(--bg-card); padding: 10px; border-radius: 20px; box-shadow: var(--shadow-card); border: 1px solid var(--border-subtle); display: none; }
+        .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border-subtle); cursor: pointer; transition: all 0.2s; position: relative;}
+        .nav-dot:hover { transform: scale(1.3); }
+        .nav-dot.answered { background: var(--brand-primary); }
+        .nav-dot.flagged { box-shadow: 0 0 0 2px var(--accent); }
+        .nav-dot.correct { background: #28a745 !important; } 
+        .nav-dot.wrong { background: #dc3545 !important; } 
+        .nav-dot.partial { background: #fd7e14 !important; } 
+        .nav-tooltip { position: absolute; right: 20px; background: #333; color: white; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; opacity: 0; pointer-events: none; white-space: nowrap; }
+        .nav-dot:hover .nav-tooltip { opacity: 1; }
+
+        @media (max-width: 1000px) {
+            .nav-sidebar { position: fixed; bottom: 20px; top: auto; right: 50%; transform: translateX(50%); flex-direction: row; }
+        }
+
+        /* SAQ STYLES */
+        .saq-intro { background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-style: italic; }
+        .saq-part { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed var(--border-subtle); }
+        .saq-part:last-child { border-bottom: none; }
+        .marking-scheme { display: none; background: rgba(0, 128, 0, 0.05); padding: 15px; border-radius: 8px; margin-top: 10px; border: 1px solid var(--success-text); }
+        .mark-point { display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 0.9rem; color: var(--success-text); cursor: pointer; }
+        .mark-point input { width: 18px; height: 18px; margin-right: 10px; margin-top: 3px; cursor: pointer; flex-shrink: 0;}
+
+        .option-item { border: 2px solid var(--border-subtle); border-radius: 8px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; }
+        .option-item:hover { border-color: var(--brand-secondary); background: rgba(0,33,71,0.02); }
+        .option-item label { padding: 15px; cursor: pointer; width: 100%; display: flex; align-items: center; }
+        .option-item input { width: 20px; height: 20px; margin-right: 15px; }
+
+        .feedback-box { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; animation: slideDown 0.3s; }
+        .feedback-box.correct { background: var(--success-bg); color: var(--success-text); border: 1px solid currentColor; }
+        .feedback-box.wrong { background: var(--error-bg); color: var(--error-text); border: 1px solid currentColor; }
+        .word-count { font-size: 0.8rem; color: var(--text-sub); display: block; text-align: right; margin-top:5px; }
+        .word-count.error { color: var(--error-text); font-weight: bold; }
+
+        #sticky-score { position: sticky; top: 10px; z-index: 100; background: var(--brand-primary); color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: none; }
+        
+        /* Filter Menu Matrix */
+        .filter-matrix { background: var(--bg-card); padding: 15px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-bottom: 20px; }
+        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
+        .filter-label { font-size: 0.8rem; font-weight: bold; width: 80px; color: var(--text-sub); }
+
+        /* UNIFIED MODAL STYLES (Replacement for Alerts) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--bg-card); padding: 30px; border-radius: 16px; text-align: center; max-width: 600px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: popIn 0.3s; max-height: 90vh; overflow-y: auto; }
+        
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--brand-secondary); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; color: var(--brand-primary); margin: 0 auto 20px; }
+        
+        /* Instructions specific */
+        .instruction-section { text-align: left; margin-bottom: 20px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 15px; }
+        .instruction-section:last-child { border-bottom: none; }
+        .instruction-section h3 { margin: 0 0 10px 0; color: var(--brand-primary); font-size: 1.1rem; }
+        .instruction-section p, .instruction-section li { margin: 5px 0; font-size: 0.95rem; color: var(--text-main); line-height: 1.5; }
+        .instruction-section ul { padding-left: 20px; margin: 0; }
+        .highlight { color: var(--brand-secondary); font-weight: bold; }
+        
+        .disclaimer-box { background: var(--flag-bg); color: var(--flag-text); padding: 15px; border-radius: 8px; font-size: 0.9rem; margin-top: 20px; text-align: left; border: 1px solid var(--accent); }
+
+        .footer-credit { text-align: center; margin-top: 30px; color: var(--text-sub); font-size: 0.9rem; font-weight: 500; opacity: 0.7; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <header>
+        <h1>Principles of Medicine Exam Generator<span style="font-size:0.5em; vertical-align:middle; background:var(--accent); color:white; padding:2px 6px; border-radius:4px;">v6.4</span></h1>
+        <div class="header-controls">
+            <button class="icon-btn" onclick="openInstructions()" title="How to use">❓</button>
+            <button class="icon-btn theme-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+        </div>
+    </header>
+
+    <div id="setup-screen">
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <span class="stat-value" id="stat-today-count">0</span>
+                <span class="stat-label">Questions Today</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="stat-accuracy">0%</span>
+                <span class="stat-label">Accuracy</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="stat-error-bank">0</span>
+                <span class="stat-label">SRS Queue</span>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="password" id="api-key" placeholder="Enter Gemini API Key..." />
+            </div>
+
+            <div class="form-group">
+                <label>Select Brain</label>
+                <select id="model-select">
+                    <option value="gemini-2.5-flash-lite" selected>Gemini 2.5 Flash Lite</option>
+                    <option value="gemini-3-flash">Gemini 3 Flash</option>
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                </select>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <strong style="color: var(--brand-primary)">Use Imperial Style Guide?</strong>
+                    <div style="font-size:0.8rem; color:var(--text-sub)">Mimics the training set + Strict Categorization.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="style-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="toggle-row">
+                <div>
+                    <strong style="color: var(--brand-primary)">Hide Tags During Exam?</strong>
+                    <div style="font-size:0.8rem; color:var(--text-sub)">Simulate test conditions (no topic clues).</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="hide-tags-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <strong style="color: var(--brand-primary)">Spaced Repetition System</strong>
+                    <div style="font-size:0.8rem; color:var(--text-sub)">Prioritizes frequently incorrect questions.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="mix-errors-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="flex:1; min-width: 100px;">
+                    <label># SBAQs</label>
+                    <input type="number" id="sbaq-count" value="3" min="0" max="10">
+                </div>
+                <div style="flex:1; min-width: 100px;">
+                    <label># VSAQs</label>
+                    <input type="number" id="vsaq-count" value="2" min="0" max="10">
+                </div>
+                <div style="flex:1; min-width: 100px;">
+                    <label># SAQs (10 marks)</label>
+                    <input type="number" id="saq-count" value="1" min="0" max="3">
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <label>Upload Materials</label>
+            <div class="drop-zone" onclick="document.getElementById('file-input').click()">
+                <span style="font-size: 2rem;">📂</span><br>
+                <strong>Drop Slides (PPTX/PDF) Here</strong><br>
+                <span style="font-size:0.8rem; color: var(--text-sub);">Extracts Images & Text Automatically</span>
+                <input type="file" id="file-input" multiple accept=".pdf, .txt, .md, image/*, .pptx, .docx, .ppt, .doc" style="display:none" onchange="updateFileList()">
+            </div>
+            <div id="file-list-display" class="file-list" style="text-align: center;"></div>
+            <textarea id="notes-input" placeholder="Or paste text notes here..." style="margin-top:15px; height: 100px;"></textarea>
+        </div>
+
+        <button onclick="generateExam()" class="btn btn-primary" id="gen-btn">Generate Exam Session</button>
+        <div id="loading" class="hidden" style="text-align: center; margin-top: 15px; font-weight: bold; color: var(--brand-primary);">
+            Consulting the Examiners... 🤖
+        </div>
+        
+        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 30px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+            <button onclick="clearLogs()" class="btn btn-secondary btn-sm" style="color: #842029;">🗑️ Reset All</button>
+            <button onclick="openErrorReview()" class="btn btn-secondary btn-sm">📖 Review Mistakes</button>
+        </div>
+    </div>
+
+    <div id="nav-sidebar" class="nav-sidebar"></div>
+
+    <div id="quiz-screen" class="hidden">
+        <div id="sticky-score">
+            <div style="display:flex; flex-direction:column; align-items:flex-start; font-size:0.8rem;">
+                <span style="font-weight: bold; font-size: 1rem;">Exam Mode</span>
+                <span id="timer-display">00:00</span>
+            </div>
+            <span id="header-score-display" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px;">-/5</span>
+            <button onclick="location.reload()" style="background: white; color: var(--brand-primary); border:none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Quit</button>
+        </div>
+        <div id="questions-container"></div>
+        <button onclick="submitQuiz()" class="btn btn-primary" id="submit-btn">Submit Answers</button>
+    </div>
+
+    <div id="review-screen" class="hidden">
+        <div id="sticky-score" style="display:flex; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle);">
+            <span style="font-weight: bold; font-size: 1.2rem;">Mistake Review</span>
+            <button onclick="location.reload()" class="btn btn-secondary btn-sm">Back to Dashboard</button>
+        </div>
+        
+        <div class="filter-matrix">
+            <div class="filter-row" id="filter-type-row">
+                <span class="filter-label">Types:</span>
+                </div>
+            <div class="filter-row" id="filter-tag-row">
+                <span class="filter-label">Topics:</span>
+                </div>
+        </div>
+
+        <div id="review-container"></div>
+        <div style="margin-top: 30px; text-align: center; padding-bottom: 30px;">
+            <button onclick="exportMistakesHTML()" class="btn btn-secondary btn-sm">📥 Mistake Bank (HTML)</button>
+            <button onclick="exportHistoryHTML()" class="btn btn-secondary btn-sm">📜 Export Full History (HTML)</button>
+        </div>
+    </div>
+
+    <div class="footer-credit">Created by Arafat Rais</div>
+</div>
+
+<div class="modal-overlay" id="generic-modal">
+    <div class="modal-content" id="modal-inner-content">
+        </div>
+</div>
+
+<script>
+    function initTheme() { document.documentElement.setAttribute('data-theme', localStorage.getItem('imperial_theme') || 'light'); }
+    function toggleTheme() {
+        const n = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', n);
+        localStorage.setItem('imperial_theme', n);
+    }
+    initTheme();
+
+    // Default API Key
+    document.getElementById('api-key').value = ''; 
+
+    const VALID_TAGS = ["Molecular Biology of the Cell", "Haematology", "Immunology & Infection", "Genetics"];
+    const VALID_TYPES = ["SBAQ", "VSAQ", "SAQ"];
+
+    const TRAIN_DATA = `
+    *** SBAQ EXAMPLES (Note: AI must generate distractors for these) ***
+    1. (Biochem) Reaction: Pentose/TCA Step. Correct: Ligation reaction (D). Explanation: This reaction involves the joining of two molecules using ATP, characteristic of ligases.
+    2. (CellBio) Cell cycle Go exit. Correct: Binding of EGF (B). Explanation: Epidermal Growth Factor (EGF) is a mitogen that signals cells to re-enter the cell cycle.
+    3. (Maths) Beer-Lambert. 19.5 abs, 136390 coeff. Correct: 143 uM (D). Explanation: A = ecl. c = A/el = 19.5 / (136390 * 1) = 0.000143 M = 143 uM.
+    4. (Clinical) 78F, pins/needles, MCV 112. Correct: B12 deficiency (A). Explanation: Macrocytic anaemia (high MCV) with neurological symptoms indicates B12 deficiency.
+    5. (Biochem) Beta oxidation Palmitate. Correct: Acetyl CoA, NADH, FADH2 (A). Explanation: Beta oxidation produces these three products directly.
+    6. (Pathology) Excessive matrix deposition. Correct: Pulmonary fibrosis (D). Explanation: Fibrosis is characterized by excess collagen/matrix deposition.
+    7. (Biochem) Glucogenic amino acids. Correct: Used in gluconeogenesis (A). Explanation: Their carbon skeletons can be converted into glucose.
+    8. (Haem) AML blood finding. Correct: Blast cells (A). Explanation: Acute Myeloid Leukaemia is characterized by the accumulation of immature blast cells.
+    9. (Immuno) Immature in periphery, present to T cells. Correct: Dendritic cells (B). Explanation: DCs capture antigen in tissues and migrate to lymph nodes to present to T cells.
+    10. (Pharm) Salbutamol mechanism. Correct: Activates intracellular G protein (C). Explanation: Salbutamol binds B2 receptors, which are GPCRs activating Gs proteins.
+    11. (Stats) Plot type. Correct: Violin plot (E). Explanation: The plot shows probability density of the data at different values, characteristic of a violin plot.
+    12. (Diagnostics) PCR advantage. Correct: Direct from specimen (D). Explanation: PCR is sensitive enough to detect DNA directly without culturing the organism.
+    13. (Genetics) Oncogene tree trunk. Correct: Proto-oncogene C (C). Explanation: The "trunk" mutation is present in all subclones (1-5), which is Proto-oncogene C.
+    14. (Pathology) Metaplasia definition. Correct: Reversible change of cell type (B). Explanation: Metaplasia is the reversible replacement of one adult cell type by another.
+    15. (Pathology) Chronic inflammation cell. Correct: Macrophage (D). Explanation: Macrophages and lymphocytes are the hallmark cells of chronic inflammation.
+
+    *** VSAQ EXAMPLES (Max 4 words) ***
+    16. (Histology) Pancreas duct epithelium. Ans: Columnar epithelium. Explanation: The larger excretory ducts of the pancreas are lined by simple columnar epithelium.
+    17. (Haem) MCH Calculation (Hb 153, RBC 5.1). Ans: 30.0 pg. Explanation: MCH = Hb/RBC = 153/5.1 = 30 pg.
+    18. (Biochem) Albumin ID on plot. Ans: Protein 2. Explanation: Albumin is the most abundant plasma protein, and Protein 2 has the highest abundance in Panel A.
+    19. (Micro) Fungal infections. Ans: Mycoses. Explanation: "Mycoses" is the general term for diseases caused by fungi.
+    20. (Immuno) Lymphocyte migration vessel. Ans: High endothelial venule. Explanation: HEVs are specialized post-capillary venules allowing lymphocyte entry into lymph nodes.
+    21. (Metabolism) Patient X mitochondria. Ans: Uncoupled from ATP production. Explanation: Oxygen consumption continues despite Oligomycin (ATP synthase inhibitor), meaning electron transport is uncoupled from ATP synthesis.
+    22. (CellBio) Cdc25 role. Ans: Phosphatase. Explanation: Cdc25 removes the inhibitory phosphate from Cdk1, activating the complex.
+    23. (Immuno) Thymus selection. Ans: T lymphocytes. Explanation: T cells mature and undergo positive/negative selection in the thymus.
+    24. (Haem) Blood film arrow. Ans: Monocytes. Explanation: The kidney-bean shaped nucleus and grey-blue cytoplasm are characteristic of monocytes.
+    25. (Pharm) Quinolone mechanism. Ans: Inhibits bacterial DNA replication. Explanation: Quinolones inhibit DNA gyrase/topoisomerase IV, preventing DNA replication.
+    26. (Genetics) Inheritance pattern (Receptor activation). Ans: Autosomal dominant. Explanation: Gain-of-function mutations (constitutive activation) usually result in a dominant inheritance pattern.
+    27. (Virology) CCR5 HIV stage. Ans: Cell entry. Explanation: CCR5 is a co-receptor required for HIV to fuse with and enter the host cell.
+    28. (Immuno) ABO logic (Anti-B agg, Anti-A no agg). Ans: Group B. Explanation: Agglutination with Anti-B means B antigens are present. No agglutination with Anti-A means A antigens are absent.
+    29. (Maths) Osmolarity Calc (PBS solution). Ans: 313.0 mOsm/L. Explanation: 137*2 (NaCl) + 2.7*2 (KCl) + 10*3 (Na2HPO4) + 1.8*2 (KH2PO4) = 274 + 5.4 + 30 + 3.6 = 313 mOsm/L.
+    30. (Biochem) Lineweaver-Burk Vmax. Ans: 50 umol/mL/minute. Explanation: Y-intercept is 1/Vmax. Intercept is 0.02. Vmax = 1/0.02 = 50.
+
+    *** SAQ EXAMPLES (Short Answer Questions - 10 Marks Total) ***
+    
+    [SAQ Example 1: Statins]
+    Intro: Statins such as lovastatin act by competitively binding to the catalytic domain of 3-hydroxy-3-methylglutaryl coenzyme A reductase (HMG-CoA reductase, HMGCR).
+    Part 1 (2 marks): Why are statins useful medications for the treatment of hypercholesterolaemia and why is HMGCR an ideal target for such drugs?
+    Model Answer: 1. HMG-CoA reductase catalyses the rate-limiting step of cholesterol biosynthesis. 2. Reduction in HMG-CoA activity therefore results in reduced cholesterol levels.
+    
+    Part 2 (2 marks): The accompanying graphs present data sets showing that experimental treatment of mice with lovastatin results in an increase in HMGCR in liver at the protein and mRNA levels. Suggest how the liver responds to treatment with lovastatin. How do you think this might alter the usefulness of statins following prolonged treatment?
+    Model Answer: 1. The liver appears to compensate for reduced HMGCR function by increasing production of HMGCR at RNA and protein levels. 2. The usefulness of statins in treating therefore be reduced if treatment is prolonged.
+    
+    Part 3 (3 marks): Compound 81 is a novel, small molecule discovered to enhance the rate of degradation of HMGCR. Describe the effects of compound 81 and lovastatin on the formation of atherosclerotic lesions based on the data.
+    Model Answer: 1. Compound 81 alone significantly reduces lesion area. 2. The effectiveness of compound 81 in reducing lesion area is equivalent to lovastatin. 3. The combination of compound 81 and lovastatin is significantly more effective than either single treatment.
+    
+    Part 4 (3 marks): The cholesterol metabolite 7-dehydrocholesterol is an intermediate in the synthesis of the active vitamin D metabolite known as calcitriol. Suggest why the increased use of sunscreen might be related to low levels of calcitriol in apparently healthy young adults.
+    Model Answer: 1. Calcitriol acts as a steroid hormone to induce key genes involved in bone metabolism. 2. A key stage in the metabolism of 7-dehydrocholesterol to calcitriol is the action of UV light. 3. Sunscreens block UV light and hence the production of calcitriol.
+
+    [SAQ Example 2: Chemokines]
+    Intro: A mature T-cell responds to the chemokines CCL22 and CCL17 by leaving the circulation and entering inflamed skin where it may encounter antigen.
+    Part 1 (3 marks): Name the class of molecules denoted by the letters A and B and the cellular process denoted by the letter C.
+    Model Answer: 1. A is Selectin. 2. B is Integrin. 3. Process is transcytosis a.k.a. diapedesis or transmigration.
+    
+    Part 2 (1 mark): A synthetic CCL22 protein was produced in bacteria and quantified using a spectrophotometer at 280 nm. Give one feature of the CCL22 protein that may contribute to its absorbance at this wavelength.
+    Model Answer: 1. Tyrosine residues OR Tryptophan residues OR Phenylalanine residues OR Disulphide-bonds.
+    
+    Part 3 (3 marks): Absorption was found to be 24.5 units in a 1 cm cuvette. State the Beer-Lambert law and use it to calculate the concentration of the spike protein in the buffer in micromoles per litre. Coeff is 136,390 M-1 cm-1.
+    Model Answer: 1. A = e * c * l (Beer-Lambert Law). 2. C = 24.5 / 136390 = 0.000180 M. 3. C = 180 uM (units required).
+    
+    Part 4 (3 marks): Describe three mechanisms that bacteria use to evade the effects of antibodies.
+    Model Answer: 1. Capsule to hide antigens. 2. Surface proteins (eg. Spa) that bind the Fc region and disrupt function. 3. Secreted proteins (eg. SSL10) that bind the Fc region and prevent detection OR Express bacterial proteases that cleave immunoglobulin.
+    `;
+
+    const HIST_KEY = 'imp_hist_v5';
+    const ERR_KEY = 'imp_err_v5';
+
+    // FILTER STATE
+    let activeTypeFilters = [...VALID_TYPES];
+    let activeTagFilters = [...VALID_TAGS];
+
+    function getHistory() { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+    function getErrors() { return JSON.parse(localStorage.getItem(ERR_KEY) || '[]'); }
+    
+    function saveHistoryEntry(q, isCorrect) {
+        const hist = getHistory();
+        hist.push({ 
+            timestamp: new Date().toISOString(), 
+            question: q.question, 
+            isCorrect: isCorrect, 
+            type: q.type,
+            tag: q.tag || "Uncategorized"
+        });
+        localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+        updateStats();
+    }
+
+    function saveError(q, userAns) {
+        let errs = getErrors();
+        let existing = errs.find(e => e.question === q.question);
+        if(existing) {
+            existing.userLastAnswer = userAns;
+            existing.timestamp = new Date().toISOString();
+            existing.repCount = (existing.repCount || 1) + 1;
+        } else {
+            errs.push({ timestamp: new Date().toISOString(), userLastAnswer: userAns, ...q, repCount: 1 });
+        }
+        localStorage.setItem(ERR_KEY, JSON.stringify(errs));
+        updateStats();
+    }
+    
+    function updateErrorTag(questionText, newTag) {
+        let errs = getErrors();
+        let e = errs.find(err => err.question === questionText);
+        if(e) { e.tag = newTag; localStorage.setItem(ERR_KEY, JSON.stringify(errs)); }
+    }
+
+    function removeError(questionText) {
+        let errs = getErrors();
+        errs = errs.filter(e => e.question !== questionText);
+        localStorage.setItem(ERR_KEY, JSON.stringify(errs));
+        updateStats();
+    }
+
+    function updateStats() {
+        const hist = getHistory();
+        const errs = getErrors();
+        const todayStr = new Date().toISOString().slice(0,10);
+        const todayEntries = hist.filter(h => h.timestamp.startsWith(todayStr));
+        const todayTotal = todayEntries.length;
+        const todayCorrect = todayEntries.filter(h => h.isCorrect).length;
+        const acc = todayTotal > 0 ? Math.round((todayCorrect / todayTotal) * 100) : 0;
+        document.getElementById('stat-today-count').innerText = todayTotal;
+        document.getElementById('stat-accuracy').innerText = acc + "%";
+        document.getElementById('stat-error-bank').innerText = errs.length;
+    }
+    updateStats();
+    
+    function updateFileList() {
+        const input = document.getElementById('file-input');
+        const display = document.getElementById('file-list-display');
+        display.innerHTML = "";
+        for(let f of input.files) display.innerHTML += `<span class="file-chip">📄 ${f.name}</span>`;
+    }
+    
+    function blobToBase64(blob) {
+        return new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result.split(',')[1]);
+            r.readAsDataURL(blob);
+        });
+    }
+
+    async function processFiles() {
+        const input = document.getElementById('file-input');
+        let parts = [];
+        for(let file of input.files) {
+            const name = file.name.toLowerCase();
+            if(name.endsWith('.pptx') || name.endsWith('.docx')) {
+                const zip = await JSZip.loadAsync(file);
+                let text = `\n--- CONTENT: ${file.name} ---\n`;
+                let xmlFiles = Object.keys(zip.files).filter(n => n.match(/(document|slide\d+)\.xml/));
+                xmlFiles.sort((a,b) => (parseInt(a.match(/\d+/))||0) - (parseInt(b.match(/\d+/))||0));
+                for(let x of xmlFiles) {
+                    const content = await zip.files[x].async("string");
+                    text += content.replace(/<[^>]+>/g, ' ') + "\n";
+                }
+                parts.push({ text: text });
+                let imgs = Object.keys(zip.files).filter(n => n.match(/media\/.*\.(png|jpg|jpeg)$/i));
+                for(let img of imgs) {
+                    const blob = await zip.files[img].async("blob");
+                    const b64 = await blobToBase64(blob);
+                    parts.push({ inline_data: { mime_type: blob.type || "image/jpeg", data: b64 } });
+                }
+            } else {
+                const b64 = await blobToBase64(file);
+                parts.push({ inline_data: { mime_type: file.type || "application/pdf", data: b64 } });
+            }
+        }
+        return parts;
+    }
+
+    let currentExamData = [];
+    let currentMaxScore = 0;
+    let currentUserScore = 0;
+    let timerInterval;
+
+    async function generateExam() {
+        const loading = document.getElementById('loading');
+        loading.classList.remove('hidden');
+        document.getElementById('gen-btn').disabled = true;
+
+        try {
+            const sbaqN = parseInt(document.getElementById('sbaq-count').value);
+            const vsaqN = parseInt(document.getElementById('vsaq-count').value);
+            const saqN = parseInt(document.getElementById('saq-count').value);
+            const mixErrors = document.getElementById('mix-errors-toggle').checked;
+            const useStyle = document.getElementById('style-toggle').checked;
+            const hideTags = document.getElementById('hide-tags-toggle').checked;
+            
+            // ANALYTICS TRACKING
+            if (typeof gtag === 'function') {
+                gtag('event', 'generate_session', { 'event_category': 'Exam', 'value': sbaqN + vsaqN + saqN });
+                if (sbaqN > 0) gtag('event', 'gen_sbaq', { 'event_category': 'Exam', 'value': sbaqN });
+                if (vsaqN > 0) gtag('event', 'gen_vsaq', { 'event_category': 'Exam', 'value': vsaqN });
+                if (saqN > 0) gtag('event', 'gen_saq', { 'event_category': 'Exam', 'value': saqN });
+            }
+
+            let reviewQuestions = [];
+            if (mixErrors) {
+                const errors = getErrors();
+                if(errors.length > 0) {
+                    const totalReq = sbaqN + vsaqN + saqN;
+                    const reviewCount = Math.min(errors.length, Math.ceil(totalReq * 0.3)); 
+                    errors.sort((a,b) => (b.repCount || 1) - (a.repCount || 1));
+                    reviewQuestions = errors.slice(0, reviewCount).map(q => ({...q, isReview: true}));
+                }
+            }
+
+            let newQuestions = [];
+            if (sbaqN + vsaqN + saqN > 0) {
+                const fileParts = await processFiles();
+                const notes = document.getElementById('notes-input').value;
+                let styleInstruction = "";
+                if(useStyle) { styleInstruction = `STYLE GUIDE (Mimic this EXACTLY):\n${TRAIN_DATA}`; }
+
+                let saqInstruction = "";
+                let saqJsonTemplate = "";
+                if (saqN === 0) {
+                    saqInstruction = "CRITICAL: DO NOT GENERATE ANY SAQ (Short Answer Questions). Only generate SBAQ and VSAQ.";
+                    saqJsonTemplate = "";
+                } else {
+                    saqInstruction = `3. SAQ: 'intro', 'parts' (question, marks, model_answer array). Total 10 marks.`;
+                    saqJsonTemplate = `
+                      {
+                        "type":"SAQ", 
+                        "tag":"...",
+                        "intro":"...", 
+                        "parts": [
+                          {"id":1, "question":"...", "marks":2, "model_answer":["Point 1 (1)", "Point 2 (1)"]},
+                          {"id":2, "question":"...", "marks":3, "model_answer":["..."]}
+                        ]
+                      }`;
+                }
+
+                const prompt = `
+                You are an Imperial College London medical examiner. Create exam questions based on content.
+                
+                CRITICAL - STRICT SCOPE CONTAINMENT: 
+                - You must ONLY generate questions based on the specific text and images provided in the 'user' parts of this prompt.
+                - DO NOT use your outside medical knowledge to create questions about topics not present in the files.
+                - If the files do not mention a specific disease, protein, or pathway, DO NOT ask about it, even if it is relevant to the general field.
+                - If there is not enough content, generate fewer questions rather than hallucinating content.
+
+                REQUIRED: ${sbaqN} SBAQs, ${vsaqN} VSAQs, and ${saqN} SAQs.
+                IMPORTANT TAGGING: Assign strictly one of these tags to "tag" field: 
+                - "Molecular Biology of the Cell"
+                - "Haematology"
+                - "Immunology & Infection"
+                - "Genetics"
+                RULES:
+                1. SBAQ: Must include 5 options (A-E). "correctAnswer" MUST be the EXACT option text string.
+                2. VSAQ: 1-4 words max answer.
+                ${saqInstruction}
+                ${styleInstruction}
+                JSON FORMAT ONLY:
+                [
+                  {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"Correct: X. Incorrect: A is wrong because..."},
+                  {"type":"VSAQ", "tag":"...", "question":"...", "acceptedAnswers":["..."], "explanation":"..."}${saqN > 0 ? ',' : ''}
+                  ${saqJsonTemplate}
+                ]`;
+                
+                const parts = [{text: prompt}];
+                if(notes) parts.push({text: "NOTES:\n"+notes});
+                parts.push(...fileParts);
+                const key = document.getElementById('api-key').value;
+                const model = document.getElementById('model-select').value;
+                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: parts }] })
+                });
+                const data = await resp.json();
+                if(data.error) throw new Error(data.error.message);
+                let txt = data.candidates[0].content.parts[0].text;
+                txt = txt.replace(/```json/g, '').replace(/```/g, '').trim();
+                const first = txt.indexOf('['); const last = txt.lastIndexOf(']');
+                if(first > -1) txt = txt.substring(first, last+1);
+                newQuestions = JSON.parse(txt);
+            }
+
+            currentExamData = [...reviewQuestions, ...newQuestions];
+            currentExamData.sort((a,b) => (a.type === 'SAQ' ? 1 : -1));
+            renderExam(currentExamData, 'questions-container', false, hideTags);
+            startTimer();
+
+        } catch(e) {
+            showCustomAlert("Generation Error", e.message);
+        } finally {
+            loading.classList.add('hidden');
+            document.getElementById('gen-btn').disabled = false;
+        }
+    }
+
+    function startTimer() {
+        let sec = 0; clearInterval(timerInterval);
+        const disp = document.getElementById('timer-display');
+        timerInterval = setInterval(() => {
+            sec++;
+            const m = Math.floor(sec / 60).toString().padStart(2,'0');
+            const s = (sec % 60).toString().padStart(2,'0');
+            disp.innerText = `${m}:${s}`;
+        }, 1000);
+    }
+
+    function saveActiveState() {
+        currentExamData.forEach((q, i) => {
+            if (q.type === 'SBAQ') {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    q.activeUserAnswer = selected.value.trim();
+                }
+            } else if (q.type === 'VSAQ') {
+                const el = document.getElementById(`input-${i}`);
+                if (el) q.activeUserAnswer = el.value;
+            } else if (q.type === 'SAQ') {
+                q.activeUserAnswer = [];
+                const areas = document.querySelectorAll(`#card-${i} textarea`);
+                areas.forEach(a => q.activeUserAnswer.push(a.value));
+            }
+        });
+    }
+
+    function promptChangeTag(index) {
+        saveActiveState(); 
+
+        const currentTag = currentExamData[index].tag || "Uncategorized";
+        let newTagIndex = VALID_TAGS.indexOf(currentTag);
+        
+        if (newTagIndex === -1) newTagIndex = 0;
+        else newTagIndex = (newTagIndex + 1) % VALID_TAGS.length;
+        
+        const newTag = VALID_TAGS[newTagIndex];
+        
+        currentExamData[index].tag = newTag;
+        updateErrorTag(currentExamData[index].question, newTag);
+        
+        const isReview = !document.getElementById('review-screen').classList.contains('hidden');
+        const hideTags = document.getElementById('hide-tags-toggle').checked;
+        
+        if(isReview) {
+            applyFilters(); 
+        } else {
+            renderExam(currentExamData, 'questions-container', false, hideTags);
+        }
+    }
+
+    function renderExam(data, containerId, isReviewMode = false, hideTags = false) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        currentMaxScore = 0; 
+        
+        const nav = document.getElementById('nav-sidebar');
+        nav.innerHTML = '';
+        if(!isReviewMode) {
+            nav.style.display = 'flex';
+            data.forEach((_, i) => {
+                nav.innerHTML += `<div class="nav-dot" id="dot-${i}" onclick="document.getElementById('card-${i}').scrollIntoView({behavior:'smooth'})"><span class="nav-tooltip">Q${i+1}</span></div>`;
+            });
+        } else {
+            nav.style.display = 'none';
+        }
+
+        data.forEach((q, i) => {
+            const div = document.createElement('div');
+            div.className = 'q-card';
+            div.id = `card-${i}`;
+            
+            let tagDisplay = q.tag || "Uncategorized";
+            let tagClass = "badge";
+            if(hideTags && !isReviewMode) tagClass += " hidden-tag";
+            
+            let badges = `<span class="badge" style="background:#e9ecef;color:#666">${q.type}</span>`;
+            badges += `<span class="${tagClass}" style="background:var(--brand-secondary); color:white;" onclick="promptChangeTag(${i})" title="Click to change topic">${tagDisplay} ✎</span>`;
+            
+            if(q.isReview) badges += `<span class="badge" style="background:var(--flag-bg); color:var(--flag-text);">SRS Review</span>`;
+
+            let contentHTML = '';
+            const inputAction = !isReviewMode ? `onchange="markNavAnswered(${i})"` : '';
+
+            const getVal = (def = '') => {
+                if (isReviewMode && q.userLastAnswer) return q.userLastAnswer;
+                if (!isReviewMode && q.activeUserAnswer) return q.activeUserAnswer;
+                return def;
+            };
+
+            if(q.type === 'SAQ') {
+                currentMaxScore += 10;
+                contentHTML += `<div class="saq-intro">${q.intro || q.question}</div>`;
+                const savedAns = getVal([]); 
+                
+                q.parts.forEach((part, pIndex) => {
+                    const val = savedAns[pIndex] || '';
+                    contentHTML += `
+                    <div class="saq-part">
+                        <strong>Part ${pIndex+1} (${part.marks} marks)</strong><br>
+                        ${part.question}<br>
+                        <textarea style="margin-top:10px; height:60px;" placeholder="Type answer here..." oninput="autoResize(this); markNavAnswered(${i})" ${isReviewMode ? 'disabled' : ''}>${val}</textarea>
+                        <div id="saq-mark-${i}-${pIndex}" class="marking-scheme" style="${isReviewMode ? 'display:block' : ''}">
+                            <strong>Model Answer (Tick marks earned):</strong><br>
+                            ${part.model_answer.map((point) => `
+                                <label class="mark-point"><input type="checkbox" onchange="updateSAQScore(${i})"> ${point}</label>
+                            `).join('')}
+                        </div>
+                    </div>`;
+                });
+            } else if(q.type === 'SBAQ') {
+                currentMaxScore += 1;
+                let opts = q.options || [];
+                contentHTML = `<div style="display:grid; gap:10px;">`;
+                
+                const userSel = getVal(); 
+
+                opts.forEach(opt => {
+                    const val = typeof opt === 'string' ? opt : JSON.stringify(opt);
+                    const clean = val.replace(/^[A-E]\.\s*/, '').trim();
+                    
+                    let isChecked = false;
+                    if(userSel) {
+                         const cleanUser = userSel.replace(/^[A-E]\.\s*/, '').trim().toLowerCase();
+                         if(clean.toLowerCase() === cleanUser) isChecked = true;
+                    }
+
+                    contentHTML += `<div class="option-item" style="${isChecked ? 'border-color:var(--brand-primary); background:rgba(0,33,71,0.05);' : ''}">
+                            <label><input type="radio" name="q${i}" value="${clean.replace(/"/g, '&quot;')}" ${isChecked?'checked':''} ${isReviewMode?'disabled':''} ${inputAction}> ${clean}</label>
+                        </div>`;
+                });
+                contentHTML += `</div>`;
+            } else {
+                currentMaxScore += 1;
+                const val = getVal();
+                contentHTML = `<input type="text" id="input-${i}" placeholder="Max 4 words..." value="${val}" onkeyup="checkWordCount(${i}); markNavAnswered(${i})" ${isReviewMode?'disabled':''}>
+                    <span id="count-${i}" class="word-count">0/4 words</span>`;
+            }
+
+            let feedbackContent = '';
+            if (isReviewMode && q.type !== 'SAQ') {
+                feedbackContent = `<strong>Correct:</strong> ${q.correctAnswer || q.acceptedAnswers}<br><br><strong>Analysis:</strong><br>${q.explanation}`;
+            }
+
+            div.innerHTML = `
+                <div class="q-header"><div>${badges}</div><button class="flag-btn" onclick="toggleFlag(${i}, this)">🚩</button></div>
+                <h3 style="margin-top:0">${i+1}. ${q.type === 'SAQ' ? 'Short Answer Question' : q.question}</h3>
+                ${contentHTML}
+                <div id="feedback-${i}" class="feedback-box" style="${isReviewMode && q.type !== 'SAQ' ? 'display:block; background:rgba(0,0,0,0.03); color:var(--text-main); border:1px solid var(--border-subtle);' : ''}">${feedbackContent}</div>
+            `;
+            container.appendChild(div);
+        });
+
+        if(!isReviewMode) {
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('review-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('sticky-score').style.display = 'flex';
+            document.getElementById('header-score-display').innerText = `0/${currentMaxScore}`;
+            if(!currentExamData.some(q => q.activeUserAnswer)) window.scrollTo(0,0);
+        }
+    }
+
+    function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+    function checkWordCount(i) {
+        const inp = document.getElementById(`input-${i}`);
+        const cnt = document.getElementById(`count-${i}`);
+        const w = inp.value.trim().split(/\s+/).filter(x=>x).length;
+        cnt.innerText = `${w}/4 words`;
+        if(w>4) { cnt.classList.add('error'); inp.style.borderColor='var(--error-text)'; }
+        else { cnt.classList.remove('error'); inp.style.borderColor='var(--border-subtle)'; }
+    }
+    function toggleFlag(i, btn) {
+        btn.classList.toggle('active');
+        const card = document.getElementById(`card-${i}`);
+        card.classList.toggle('flagged');
+        const dot = document.getElementById(`dot-${i}`);
+        if(dot) { if(card.classList.contains('flagged')) dot.classList.add('flagged'); else dot.classList.remove('flagged'); }
+    }
+    function markNavAnswered(i) { const dot = document.getElementById(`dot-${i}`); if(dot) dot.classList.add('answered'); }
+
+    function updateSAQScore(qIndex) {
+        let total = currentUserScore;
+        const checkboxes = document.querySelectorAll('.mark-point input[type="checkbox"]:checked');
+        const saqScore = checkboxes.length;
+        const finalScore = total + saqScore;
+        const percent = Math.round((finalScore / currentMaxScore) * 100);
+        document.getElementById('header-score-display').innerText = `${finalScore}/${currentMaxScore} (${percent}%)`;
+        if (qIndex !== undefined) {
+            const cardChecks = document.querySelectorAll(`#card-${qIndex} .mark-point input[type="checkbox"]`);
+            const checked = document.querySelectorAll(`#card-${qIndex} .mark-point input[type="checkbox"]:checked`);
+            const dot = document.getElementById(`dot-${qIndex}`);
+            if(dot) {
+                dot.classList.remove('answered', 'wrong', 'correct', 'partial');
+                if(checked.length === 0) dot.classList.add('wrong');
+                else if(checked.length === cardChecks.length) dot.classList.add('correct');
+                else dot.classList.add('partial');
+            }
+        }
+    }
+
+    function submitQuiz() {
+        clearInterval(timerInterval);
+        let score = 0;
+        
+        currentExamData.forEach((q, i) => {
+            const dot = document.getElementById(`dot-${i}`);
+            
+            if(q.type === 'SAQ') {
+                const schemes = document.querySelectorAll(`#card-${i} .marking-scheme`);
+                schemes.forEach(s => s.style.display = 'block');
+                const inputs = document.querySelectorAll(`#card-${i} textarea`);
+                const answers = Array.from(inputs).map(inp => inp.value);
+                saveError(q, answers);
+                if(dot) { dot.classList.remove('answered'); dot.classList.add('wrong'); }
+                return; 
+            }
+
+            const feedback = document.getElementById(`feedback-${i}`);
+            let isCorrect = false;
+            let correctAns = q.correctAnswer || (q.acceptedAnswers ? q.acceptedAnswers[0] : "See explanation");
+            let userAns = "";
+
+            if(q.type === 'SBAQ') {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                
+                if(selected) {
+                    userAns = selected.value.trim();
+                    const cleanSel = userAns.toLowerCase();
+                    const cleanCorrect = correctAns.trim().toLowerCase();
+                    const selText = cleanSel.replace(/^(option\s+)?[a-e][\.\)\s]\s*/, '');
+                    const corText = cleanCorrect.replace(/^(option\s+)?[a-e][\.\)\s]\s*/, '');
+
+                    if(selText === corText || cleanSel === cleanCorrect) {
+                        isCorrect = true;
+                    } 
+                    else {
+                        const letterMatch = cleanCorrect.match(/^(option\s+)?([a-e])([\.\)\s]|$)/);
+                        if(letterMatch) {
+                            const correctLetter = letterMatch[2]; 
+                            const correctIndex = correctLetter.charCodeAt(0) - 97;
+                            const selectedIndex = Array.from(radios).findIndex(r => r === selected);
+                            if(correctIndex === selectedIndex && selectedIndex !== -1) isCorrect = true;
+                        }
+                    }
+                }
+            } 
+            else {
+                userAns = document.getElementById(`input-${i}`).value;
+                const acc = q.acceptedAnswers || [correctAns];
+                if(acc.some(a => a.toLowerCase().includes(userAns.toLowerCase()) && userAns.length>1)) isCorrect = true;
+            }
+            
+            if(isCorrect) {
+                score++;
+                removeError(q.question); 
+            } else {
+                saveError(q, userAns || "No Answer");
+            }
+            
+            saveHistoryEntry(q, isCorrect);
+            if(dot) { 
+                dot.classList.remove('answered'); 
+                if(isCorrect) dot.classList.add('correct'); 
+                else dot.classList.add('wrong'); 
+            }
+            
+            feedback.style.display = 'block';
+            feedback.className = isCorrect ? 'feedback-box correct' : 'feedback-box wrong';
+            feedback.innerHTML = `<strong>${isCorrect?'Correct':'Incorrect'}</strong><br>Answer: ${correctAns}<br><br><strong>Analysis:</strong><br>${q.explanation}`;
+            
+            if(!isCorrect && q.type === 'VSAQ') {
+                feedback.innerHTML += `<button class="btn btn-secondary" style="margin-top:10px; width:100%" onclick="markCorrect(${i})">Mark as Correct</button>`;
+            }
+        });
+
+        currentUserScore = score; 
+        updateSAQScore(); 
+        document.getElementById('submit-btn').style.display = 'none';
+        
+        if(!currentExamData.some(q => q.type === 'SAQ')) {
+            const pct = Math.round((score/currentMaxScore)*100);
+            showResultModal(pct, score, currentMaxScore);
+            if(pct > 70) confetti();
+        } else {
+            showCustomAlert("Self Marking Required", "Please self-mark the SAQ sections by ticking the boxes for points achieved.");
+        }
+    }
+
+    function markCorrect(i) {
+        currentUserScore++; const q = currentExamData[i];
+        removeError(q.question);
+        document.getElementById(`feedback-${i}`).className = 'feedback-box correct';
+        const dot = document.getElementById(`dot-${i}`); if(dot) { dot.classList.remove('wrong'); dot.classList.add('partial'); }
+        updateSAQScore();
+    }
+    
+    // --- CUSTOM MODAL SYSTEM (REPLACES WEB ALERTS) ---
+
+    function showCustomAlert(title, message) {
+        const modal = document.getElementById('generic-modal');
+        const content = document.getElementById('modal-inner-content');
+        content.innerHTML = `
+            <h2 style="color:var(--brand-primary); margin-top:0;">${title}</h2>
+            <p style="color:var(--text-main); margin-bottom:25px;">${message}</p>
+            <button class="btn btn-primary" onclick="closeGenericModal()">OK</button>
+        `;
+        modal.style.display = 'flex';
+    }
+
+    function showCustomConfirm(title, message, onYes) {
+        const modal = document.getElementById('generic-modal');
+        const content = document.getElementById('modal-inner-content');
+        content.innerHTML = `
+            <h2 style="color:var(--brand-primary); margin-top:0;">${title}</h2>
+            <p style="color:var(--text-main); margin-bottom:25px;">${message}</p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-secondary" onclick="closeGenericModal()" style="flex:1">Cancel</button>
+                <button class="btn btn-primary" id="confirm-yes-btn" style="flex:1">Confirm</button>
+            </div>
+        `;
+        document.getElementById('confirm-yes-btn').onclick = function() {
+            onYes();
+            closeGenericModal();
+        };
+        modal.style.display = 'flex';
+    }
+
+    function showResultModal(pct, score, max) {
+        const modal = document.getElementById('generic-modal');
+        const content = document.getElementById('modal-inner-content');
+        content.innerHTML = `
+            <div class="score-circle">${pct}%</div>
+            <h2 style="color:var(--brand-primary);">Session Complete</h2>
+            <p style="color:var(--text-sub); margin-bottom:25px;">Score: ${score}/${max}</p>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="closeGenericModal()" class="btn btn-secondary" style="flex:1">Review Answers</button>
+                <button onclick="location.reload()" class="btn btn-primary" style="flex:1">Next Exam</button>
+            </div>
+        `;
+        modal.style.display = 'flex';
+    }
+    
+    function openInstructions() {
+        const modal = document.getElementById('generic-modal');
+        const content = document.getElementById('modal-inner-content');
+        content.innerHTML = `
+            <h2 style="color:var(--brand-primary); margin-top:0; border-bottom:1px solid #ddd; padding-bottom:10px;">Principles of Medicine Exam Generator Guide</h2>
+            
+            <div class="instruction-section">
+                <h3>1. Initial Setup</h3>
+                <p>This app requires a <strong>Gemini API Key</strong> to function. You can get one for free from Google AI Studio.</p>
+                <p>Paste the key into the "API Key" field on the dashboard. </p>
+            </div>
+            
+            <div class="instruction-section">
+                <h3>2. Uploading Content</h3>
+                <p><strong>Supported Files:</strong> PDF, PPTX, DOCX, TXT, and Images.</p>
+                <p><strong>How it works:</strong> Drag and drop your lecture slides. The app extracts text and images to generate questions based <em>strictly</em> on that content.</p>
+            </div>
+            
+            <div class="instruction-section">
+                <h3>3. Exam Configuration</h3>
+                <ul>
+                    <li><strong>Questions:</strong> Choose the number of SBAQ (Single Best Answer), VSAQ (Very Short Answer), and SAQ (Short Answer - 10 marks).</li>
+                    <li><strong>Spaced Repetition:</strong> Toggle this to include questions you previously got wrong in the new exam session.</li>
+                    <li><strong>Hide Tags:</strong> Use this for "Mock Exam" conditions where you don't want topic hints.</li>
+                </ul>
+            </div>
+
+            <div class="instruction-section">
+                <h3>4. Taking the Exam</h3>
+                <p>Use the sidebar to navigate questions. Flag questions for review using the 🚩 icon.</p>
+                <p><strong>SAQs:</strong> These are self-marked. After submitting, tick the checkboxes for the points you achieved based on the model answer.</p>
+            </div>
+
+            <div class="instruction-section">
+                <h3>5. Mistake Bank & Exports</h3>
+                <p>Any question you get wrong is saved to the "Review Mistakes" library.</p>
+                <p><strong>HTML Export:</strong> Download a beautifully formatted "Mistake Bank" file to keep a permanent record of your revision areas.</p>
+                <p><strong>Tagging:</strong> Click the colored topic badge on any question to manually change its category if the AI mislabeled it.</p>
+            </div>
+
+            <div class="disclaimer-box">
+                <strong>⚠️ Disclaimer:</strong><br>
+                This tool uses Generative AI (Gemini Flash). While strict controls are in place to prevent hallucinations, mistakes can still occur. Always verify answers against your official lecture notes. This tool is for revision retrieval practice, not a replacement for primary study.
+            </div>
+
+            <button class="btn btn-primary" onclick="closeGenericModal()" style="margin-top:20px; width:100%;">Close Guide</button>
+        `;
+        modal.style.display = 'flex';
+    }
+
+    function closeGenericModal() {
+        document.getElementById('generic-modal').style.display = 'none';
+    }
+    
+    // --- ADVANCED REVIEW FILTERING ---
+    function openErrorReview() {
+        const e = getErrors();
+        if(!e.length) return showCustomAlert("Clean Slate", "No mistakes recorded yet! Go do some exams.");
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('review-screen').classList.remove('hidden');
+        
+        renderFilterButtons();
+        applyFilters();
+    }
+
+    function renderFilterButtons() {
+        let typeHTML = `<button class="btn btn-secondary btn-sm ${activeTypeFilters.length===VALID_TYPES.length?'active':''}" onclick="toggleTypeFilter('ALL')">All</button>`;
+        VALID_TYPES.forEach(t => {
+            typeHTML += `<button class="btn btn-secondary btn-sm ${activeTypeFilters.includes(t)?'active':''}" onclick="toggleTypeFilter('${t}')">${t}</button>`;
+        });
+        document.getElementById('filter-type-row').innerHTML = `<span class="filter-label">Types:</span> ${typeHTML}`;
+
+        let tagHTML = `<button class="btn btn-secondary btn-sm ${activeTagFilters.length===VALID_TAGS.length?'active':''}" onclick="toggleTagFilter('ALL')">All</button>`;
+        VALID_TAGS.forEach(t => {
+            tagHTML += `<button class="btn btn-secondary btn-sm ${activeTagFilters.includes(t)?'active':''}" onclick="toggleTagFilter('${t}')">${t}</button>`;
+        });
+        document.getElementById('filter-tag-row').innerHTML = `<span class="filter-label">Topics:</span> ${tagHTML}`;
+    }
+
+    function toggleTypeFilter(val) {
+        if(val === 'ALL') {
+            if(activeTypeFilters.length === VALID_TYPES.length) activeTypeFilters = [];
+            else activeTypeFilters = [...VALID_TYPES];
+        } else {
+            if(activeTypeFilters.includes(val)) activeTypeFilters = activeTypeFilters.filter(x => x !== val);
+            else activeTypeFilters.push(val);
+        }
+        renderFilterButtons();
+        applyFilters();
+    }
+
+    function toggleTagFilter(val) {
+        if(val === 'ALL') {
+            if(activeTagFilters.length === VALID_TAGS.length) activeTagFilters = [];
+            else activeTagFilters = [...VALID_TAGS];
+        } else {
+            if(activeTagFilters.includes(val)) activeTagFilters = activeTagFilters.filter(x => x !== val);
+            else activeTagFilters.push(val);
+        }
+        renderFilterButtons();
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const allErrors = getErrors();
+        const filtered = allErrors.filter(q => {
+            const matchesType = activeTypeFilters.includes(q.type);
+            const qTag = q.tag || "Uncategorized"; 
+            const matchesTag = activeTagFilters.includes(qTag) || (activeTagFilters.length === VALID_TAGS.length); 
+            return matchesType && matchesTag;
+        });
+
+        currentExamData = filtered; 
+        if(filtered.length === 0) {
+            document.getElementById('review-container').innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sub);">No questions match current filters.</div>`;
+        } else {
+            renderExam(filtered, 'review-container', true, false);
+        }
+    }
+
+    function clearLogs() { 
+        showCustomConfirm("Clear History?", "This will wipe all exam stats and your mistake bank. Are you sure?", () => {
+            localStorage.removeItem(HIST_KEY); 
+            localStorage.removeItem(ERR_KEY); 
+            updateStats();
+        });
+    }
+
+    // --- HTML EXPORT FUNCTIONS (DOM ATTACHMENT FIX) ---
+
+    function exportMistakesHTML() {
+        const errs = getErrors();
+        if(errs.length === 0) return showCustomAlert("Empty", "No mistakes to export.");
+
+        let html = `<html><head><style>
+            body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #333; max-width: 800px; margin: 0 auto; line-height: 1.6; }
+            h1 { color: #002147; border-bottom: 2px solid #002147; padding-bottom: 10px; }
+            .question-card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 30px; page-break-inside: avoid; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+            .badges { margin-bottom: 10px; font-size: 0.85em; }
+            .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; margin-right: 5px; font-weight: bold; }
+            .badge-type { background: #e9ecef; color: #555; }
+            .badge-tag { background: #d4af37; color: white; }
+            .user-ans { color: #842029; font-weight: bold; }
+            .correct-ans { color: #0f5132; font-weight: bold; }
+            .explanation { background: #f8f9fa; padding: 15px; border-left: 4px solid #002147; margin-top: 15px; border-radius: 4px; }
+            ul { margin: 5px 0; padding-left: 20px; }
+        </style></head><body>
+        <h1>Principles of Medicine Mistake Bank</h1>
+        <p>Generated on ${new Date().toLocaleDateString()}</p>`;
+
+        errs.forEach((e, i) => {
+            let optionsHTML = '';
+            if(e.type === 'SBAQ' && e.options) {
+                optionsHTML = `<div><strong>Options:</strong><ul>${e.options.map(o => `<li>${o}</li>`).join('')}</ul></div>`;
+            }
+
+            let userAnsDisplay = e.userLastAnswer;
+            if(Array.isArray(userAnsDisplay)) {
+                userAnsDisplay = `<ol>` + userAnsDisplay.map(a => `<li>${a || '(No answer)'}</li>`).join('') + `</ol>`;
+            } else if (!userAnsDisplay) {
+                userAnsDisplay = "(No answer recorded)";
+            }
+
+            let correctDisplay = e.correctAnswer || (Array.isArray(e.acceptedAnswers) ? e.acceptedAnswers.join(', ') : '');
+            let qTitle = e.question; // Default
+
+            if (e.type === 'SAQ') {
+                // FIX: SAQ Title Logic
+                qTitle = e.intro || e.question || "Short Answer Question";
+                if(e.parts) {
+                    correctDisplay = `<div><strong>Model Answers:</strong><br>${e.parts.map((p,idx) => `<em>Part ${idx+1}:</em> ${p.model_answer.join('; ')}`).join('<br>')}</div>`;
+                }
+            }
+
+            html += `
+            <div class="question-card">
+                <div class="badges">
+                    <span class="badge badge-type">${e.type}</span>
+                    <span class="badge badge-tag">${e.tag || 'Uncategorized'}</span>
+                </div>
+                <h3>${i+1}. ${qTitle}</h3>
+                ${optionsHTML}
+                <p><strong>You Answered:</strong> <span class="user-ans">${userAnsDisplay}</span></p>
+                <p><strong>Correct Answer:</strong> <span class="correct-ans">${correctDisplay}</span></p>
+                <div class="explanation"><strong>Explanation:</strong><br>${e.explanation}</div>
+            </div>`;
+        });
+
+        html += `</body></html>`;
+        const blob = new Blob([html], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Principles_of_Medicine_Mistake_Bank.html';
+        a.click();
+    }
+
+    function exportHistoryHTML() {
+        const hist = getHistory();
+        if(hist.length === 0) return showCustomAlert("Empty", "No history to export.");
+
+        let html = `<html><head><style>
+            body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #333; max-width: 900px; margin: 0 auto; }
+            h1 { color: #002147; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th { background: #002147; color: white; text-align: left; padding: 12px; }
+            td { border-bottom: 1px solid #ddd; padding: 10px; font-size: 0.9em; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            .correct { color: #0f5132; font-weight: bold; background: #d1e7dd; padding: 2px 6px; border-radius: 4px; }
+            .wrong { color: #842029; font-weight: bold; background: #f8d7da; padding: 2px 6px; border-radius: 4px; }
+        </style></head><body>
+        <h1>Full Exam History</h1>
+        <table>
+            <tr><th>Date</th><th>Type</th><th>Question</th><th>Result</th></tr>`;
+
+        hist.forEach(h => {
+             const dateStr = new Date(h.timestamp).toLocaleDateString();
+             const resClass = h.isCorrect ? 'correct' : 'wrong';
+             const resText = h.isCorrect ? 'Correct' : 'Wrong';
+             
+             html += `<tr>
+                <td>${dateStr}</td>
+                <td>${h.type}</td>
+                <td>${h.question}</td>
+                <td><span class="${resClass}">${resText}</span></td>
+             </tr>`;
+        });
+
+        html += `</table></body></html>`;
+        const blob = new Blob([html], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Principles_of_Medicine_Exam_History.html';
+        a.click();
+    }
+</script>
+</body>
+</html>
