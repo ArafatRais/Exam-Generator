@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PoM Exam Generator v6.4</title>
+    <title>PoM Exam Generator v6.5</title>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GLJZDKZM9"></script>
     <script>
@@ -110,6 +110,10 @@
         .nav-dot.correct { background: #28a745 !important; } 
         .nav-dot.wrong { background: #dc3545 !important; } 
         .nav-dot.partial { background: #fd7e14 !important; } 
+        
+        /* New Active State for Sidebar */
+        .nav-dot.active-dot { transform: scale(1.5); border: 2px solid var(--brand-primary); background: var(--accent); z-index: 2; }
+
         .nav-tooltip { position: absolute; right: 20px; background: #333; color: white; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; opacity: 0; pointer-events: none; white-space: nowrap; }
         .nav-dot:hover .nav-tooltip { opacity: 1; }
 
@@ -171,7 +175,7 @@
 
 <div class="main-wrapper">
     <header>
-        <h1>PoM Exam Generator <span style="font-size:0.5em; vertical-align:middle; background:var(--accent); color:white; padding:2px 6px; border-radius:4px;">v6.4</span></h1>
+        <h1>PoM Exam Generator <span style="font-size:0.5em; vertical-align:middle; background:var(--accent); color:white; padding:2px 6px; border-radius:4px;">v6.5</span></h1>
         <div class="header-controls">
             <button class="icon-btn" onclick="openInstructions()" title="How to use">❓</button>
             <button class="icon-btn theme-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
@@ -602,7 +606,15 @@
                 - "Haematology"
                 - "Immunology & Infection"
                 - "Genetics"
-                RULES:
+                
+                CRITICAL RULES FOR QUALITY CONTROL:
+                1. DISTRACTORS: Must be of the SAME CATEGORY and DATA TYPE as the correct answer. (e.g. if the answer is a time '20 mins', distractors must be other times '10 mins', '1 hour'. Do NOT use random words like 'Bacteria' or 'HIV').
+                2. META-LANGUAGE BAN: NEVER use phrases like "According to the text", "The notes mention", "As seen in the image". Write as if you are a standard external exam board.
+                3. DIFFICULTY: Options must be homogeneous in tone. Avoid "positive" vs "negative" outliers where one option clearly stands out.
+                4. ANTI-LEAKAGE: Ensure the question stem of one question does not reveal the answer to another question generated in this batch.
+                5. EXPLANATION FORMAT: In the 'explanation' field, you MUST use HTML tags (<br>, <b>) to format the text. Structure it as: "<b>Correct:</b> [Reason]. <br><br><b>Why others are wrong:</b><br>• Option A: [Reason]<br>• Option B: [Reason]..."
+
+                TYPES:
                 1. SBAQ: Must include 5 options (A-E). "correctAnswer" MUST be the EXACT option text string.
                 2. VSAQ: 1-4 words max answer.
                 ${saqInstruction}
@@ -610,7 +622,7 @@
                 ${styleInstruction}
                 JSON FORMAT ONLY:
                 [
-                  {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"Correct: X. Incorrect: A is wrong because..."},
+                  {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"..."},
                   {"type":"VSAQ", "tag":"...", "question":"...", "acceptedAnswers":["..."], "explanation":"..."}${saqN > 0 ? ',' : ''}
                   ${saqJsonTemplate}
                 ]`;
@@ -716,10 +728,33 @@
             nav.style.display = 'none';
         }
 
+        // SCROLL SPY LOGIC
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.6 // 60% of card visible
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Remove active from all dots
+                    document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active-dot'));
+                    // Add active to current
+                    const id = entry.target.id.split('-')[1];
+                    const dot = document.getElementById(`dot-${id}`);
+                    if(dot) dot.classList.add('active-dot');
+                }
+            });
+        }, observerOptions);
+
         data.forEach((q, i) => {
             const div = document.createElement('div');
             div.className = 'q-card';
             div.id = `card-${i}`;
+            
+            // Observe for scroll spy
+            observer.observe(div);
             
             let tagDisplay = q.tag || "Uncategorized";
             let tagClass = "badge";
