@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PoM Exam Generator v6.5</title>
+    <title>PoM Exam Generator v6.6</title>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GLJZDKZM9"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-8GLJZDKZM9');
     </script>
 
@@ -29,7 +28,6 @@
             --text-sub: #6c757d;
             --border-subtle: #e9ecef;
             --shadow-card: 0 4px 20px rgba(0,0,0,0.06);
-            
             --success-bg: #d1e7dd; --success-text: #0f5132;
             --error-bg: #f8d7da; --error-text: #842029;
             --flag-bg: #fff3cd; --flag-text: #856404;
@@ -55,7 +53,7 @@
         h1 { margin: 0; color: var(--brand-primary); font-weight: 800; letter-spacing: -0.5px; }
         
         .header-controls { display: flex; gap: 10px; align-items: center; }
-        .icon-btn { background: var(--bg-card); border: 1px solid var(--border-subtle); color: var(--text-main); font-size: 1.2rem; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: 0.2s; box-shadow: var(--shadow-card); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;}
+        .icon-btn { background: var(--bg-card); border: 1px solid var(--border-subtle); color: var(--text-main); font-size: 1rem; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: 0.2s; box-shadow: var(--shadow-card); display: flex; align-items: center; justify-content: center; height: 40px;}
         .icon-btn:hover { transform: translateY(-2px); border-color: var(--brand-primary); }
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
@@ -81,14 +79,46 @@
         .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-subtle); width: auto; padding: 8px 16px; font-size: 0.9rem; margin: 2px; }
         .btn-secondary:hover { border-color: var(--brand-secondary); color: var(--brand-primary); }
         .btn-secondary.active { background: var(--brand-primary); color: white; border-color: var(--brand-primary); }
+        
+        .btn-sm { padding: 5px 12px; font-size: 0.85rem; border-radius: 6px; }
 
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        /* Compact Toggles - TIGHTENED */
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        
+        .toggle-card { 
+            background: rgba(0,0,0,0.03); 
+            padding: 12px 15px; 
+            border-radius: 8px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .toggle-card:hover { border-color: var(--border-subtle); background: rgba(0,0,0,0.05); }
+
+        .toggle-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 2px;
+        }
+        
+        .toggle-header strong { font-size: 0.95rem; color: var(--brand-primary); }
+
+        .toggle-desc { 
+            font-size: 0.75rem; 
+            color: var(--text-sub); 
+            line-height: 1.2; 
+            margin-top: 0;
+        }
+
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--brand-primary); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        input:checked + .slider:before { transform: translateX(18px); }
 
         .q-card { background: var(--bg-card); padding: 30px; border-radius: 12px; box-shadow: var(--shadow-card); margin-bottom: 25px; border-left: 5px solid transparent; scroll-margin-top: 100px; }
         .q-card.flagged { border-left-color: var(--accent); }
@@ -101,21 +131,56 @@
         .flag-btn { background: none; border: none; cursor: pointer; color: var(--text-sub); font-size: 1.2rem; }
         .flag-btn.active { color: var(--accent); }
 
-        /* NAV SIDEBAR */
-        .nav-sidebar { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 90; background: var(--bg-card); padding: 10px; border-radius: 20px; box-shadow: var(--shadow-card); border: 1px solid var(--border-subtle); display: none; }
-        .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border-subtle); cursor: pointer; transition: all 0.2s; position: relative;}
+        /* NAV SIDEBAR DEFAULT (RIGHT) */
+        .nav-sidebar { 
+            position: fixed; right: 20px; top: 50%; transform: translateY(-50%); 
+            display: flex; flex-direction: column; gap: 8px; z-index: 90; 
+            background: var(--bg-card); padding: 10px; border-radius: 20px; 
+            box-shadow: var(--shadow-card); border: 1px solid var(--border-subtle); 
+            display: none; transition: all 0.3s ease; 
+        }
+        
+        /* NAV SIDEBAR BOTTOM (SINGLE VIEW) */
+        .nav-sidebar.bottom-mode { 
+            right: 50%; top: auto; bottom: 20px; 
+            transform: translateX(50%); 
+            flex-direction: row; 
+            align-items: center;
+            width: auto; max-width: 90%; 
+            overflow-x: auto; 
+            padding: 10px 15px; 
+            height: auto;
+            max-height: 60px;
+        }
+
+        .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border-subtle); cursor: pointer; transition: all 0.2s; position: relative; flex-shrink: 0; }
         .nav-dot:hover { transform: scale(1.3); }
         .nav-dot.answered { background: var(--brand-primary); }
         .nav-dot.flagged { box-shadow: 0 0 0 2px var(--accent); }
         .nav-dot.correct { background: #28a745 !important; } 
         .nav-dot.wrong { background: #dc3545 !important; } 
         .nav-dot.partial { background: #fd7e14 !important; } 
-        
-        /* New Active State for Sidebar */
-        .nav-dot.active-dot { transform: scale(1.5); border: 2px solid var(--brand-primary); background: var(--accent); z-index: 2; }
+        .nav-dot.active-dot { transform: scale(1.6); z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-        .nav-tooltip { position: absolute; right: 20px; background: #333; color: white; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; opacity: 0; pointer-events: none; white-space: nowrap; }
+        .nav-arrow { background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; padding: 0 10px; display: none; line-height: 1; opacity: 0.7; margin-bottom: -5px;}
+        .nav-arrow:hover { opacity: 1; transform: scale(1.2); color: var(--brand-primary); }
+        .nav-sidebar.bottom-mode .nav-arrow { display: block; }
+
+        .nav-tooltip { 
+            position: absolute; right: 25px; top: 50%; transform: translateY(-50%); 
+            background: #333; color: white; padding: 2px 6px; font-size: 0.7rem; 
+            border-radius: 4px; opacity: 0; pointer-events: none; white-space: nowrap; z-index: 1000; 
+        }
+        /* Fix tooltips appearing under bottom bar */
+        .nav-sidebar.bottom-mode .nav-tooltip { 
+            top: auto; bottom: 45px; right: auto; left: 50%; 
+            transform: translateX(-50%); 
+        }
         .nav-dot:hover .nav-tooltip { opacity: 1; }
+
+        /* FLOATING ACTION BUTTON (SUBMIT) */
+        .fab-submit { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--brand-secondary); color: white; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 1.5rem; cursor: pointer; display: none; z-index: 100; transition: transform 0.2s; align-items: center; justify-content: center;}
+        .fab-submit:hover { transform: scale(1.1); background: var(--brand-primary); }
 
         @media (max-width: 1000px) {
             .nav-sidebar { position: fixed; bottom: 20px; top: auto; right: 50%; transform: translateX(50%); flex-direction: row; }
@@ -129,10 +194,14 @@
         .mark-point { display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 0.9rem; color: var(--success-text); cursor: pointer; }
         .mark-point input { width: 18px; height: 18px; margin-right: 10px; margin-top: 3px; cursor: pointer; flex-shrink: 0;}
 
-        .option-item { border: 2px solid var(--border-subtle); border-radius: 8px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; }
+        .option-item { border: 2px solid var(--border-subtle); border-radius: 8px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; }
         .option-item:hover { border-color: var(--brand-secondary); background: rgba(0,33,71,0.02); }
+        .option-item.excluded { opacity: 0.5; text-decoration: line-through; background: rgba(0,0,0,0.05); border-color: transparent; }
         .option-item label { padding: 15px; cursor: pointer; width: 100%; display: flex; align-items: center; }
         .option-item input { width: 20px; height: 20px; margin-right: 15px; }
+        
+        .exclude-btn { background: none; border: none; color: var(--text-sub); font-size: 1.2rem; padding: 0 15px; cursor: pointer; opacity: 0.5; transition: 0.2s; }
+        .exclude-btn:hover { opacity: 1; color: var(--error-text); transform: scale(1.2); }
 
         .feedback-box { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; animation: slideDown 0.3s; }
         .feedback-box.correct { background: var(--success-bg); color: var(--success-text); border: 1px solid currentColor; }
@@ -142,18 +211,20 @@
 
         #sticky-score { position: sticky; top: 10px; z-index: 100; background: var(--brand-primary); color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: none; }
         
+        .nav-controls { display: none; gap: 10px; } 
+        
         /* Filter Menu Matrix */
         .filter-matrix { background: var(--bg-card); padding: 15px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-bottom: 20px; }
         .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
         .filter-label { font-size: 0.8rem; font-weight: bold; width: 80px; color: var(--text-sub); }
 
-        /* UNIFIED MODAL STYLES (Replacement for Alerts) */
+        /* UNIFIED MODAL STYLES */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: var(--bg-card); padding: 30px; border-radius: 16px; text-align: center; max-width: 600px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: popIn 0.3s; max-height: 90vh; overflow-y: auto; }
         
         .score-circle { width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--brand-secondary); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; color: var(--brand-primary); margin: 0 auto 20px; }
         
-        /* Instructions specific */
+        /* Instructions & Changelog */
         .instruction-section { text-align: left; margin-bottom: 20px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 15px; }
         .instruction-section:last-child { border-bottom: none; }
         .instruction-section h3 { margin: 0 0 10px 0; color: var(--brand-primary); font-size: 1.1rem; }
@@ -161,6 +232,14 @@
         .instruction-section ul { padding-left: 20px; margin: 0; }
         .highlight { color: var(--brand-secondary); font-weight: bold; }
         
+        .changelog-table { width: 100%; text-align: left; border-collapse: separate; border-spacing: 0; margin-top: 10px; font-size: 0.85rem; }
+        .changelog-table th { background: var(--brand-primary); color: white; padding: 8px; }
+        .changelog-table th:first-child { border-top-left-radius: 8px; }
+        .changelog-table th:last-child { border-top-right-radius: 8px; }
+        .changelog-table td { border-bottom: 1px solid var(--border-subtle); padding: 8px; vertical-align: top; }
+        .changelog-table tr:last-child td { border-bottom: none; }
+        .version-badge { background: var(--accent); color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
+
         .disclaimer-box { background: var(--flag-bg); color: var(--flag-text); padding: 15px; border-radius: 8px; font-size: 0.9rem; margin-top: 20px; text-align: left; border: 1px solid var(--accent); }
 
         .footer-credit { text-align: center; margin-top: 30px; color: var(--text-sub); font-size: 0.9rem; font-weight: 500; opacity: 0.7; }
@@ -175,9 +254,10 @@
 
 <div class="main-wrapper">
     <header>
-        <h1>PoM Exam Generator <span style="font-size:0.5em; vertical-align:middle; background:var(--accent); color:white; padding:2px 6px; border-radius:4px;">v6.5</span></h1>
+        <h1>PoM Exam Generator <span style="font-size:0.5em; vertical-align:middle; background:var(--accent); color:white; padding:2px 6px; border-radius:4px;">v6.6</span></h1>
         <div class="header-controls">
-            <button class="icon-btn" onclick="openInstructions()" title="How to use">❓</button>
+            <button class="icon-btn" onclick="openChangelog()" title="Version History">📜 Log</button>
+            <button class="icon-btn" onclick="openInstructions()" title="How to use">❓ Guide</button>
             <button class="icon-btn theme-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
         </div>
     </header>
@@ -213,37 +293,39 @@
                 </select>
             </div>
 
-            <div class="toggle-row">
-                <div>
-                    <strong style="color: var(--brand-primary)">Use Imperial Style Guide?</strong>
-                    <div style="font-size:0.8rem; color:var(--text-sub)">Mimics the training set + Strict Categorization.</div>
+            <div class="settings-grid">
+                <div class="toggle-card">
+                    <div class="toggle-header">
+                        <strong>Hide Tags</strong>
+                        <label class="switch">
+                            <input type="checkbox" id="hide-tags-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-desc">No topic clues during exam.</div>
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="style-toggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="toggle-row">
-                <div>
-                    <strong style="color: var(--brand-primary)">Hide Tags During Exam?</strong>
-                    <div style="font-size:0.8rem; color:var(--text-sub)">Simulate test conditions (no topic clues).</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="hide-tags-toggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
 
-            <div class="toggle-row">
-                <div>
-                    <strong style="color: var(--brand-primary)">Spaced Repetition System</strong>
-                    <div style="font-size:0.8rem; color:var(--text-sub)">Prioritizes frequently incorrect questions.</div>
+                <div class="toggle-card">
+                    <div class="toggle-header">
+                        <strong>SRS Logic</strong>
+                        <label class="switch">
+                            <input type="checkbox" id="mix-errors-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-desc">Mix in previous mistakes.</div>
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="mix-errors-toggle" checked>
-                    <span class="slider"></span>
-                </label>
+
+                <div class="toggle-card">
+                    <div class="toggle-header">
+                        <strong>Application</strong>
+                        <label class="switch">
+                            <input type="checkbox" id="application-mode-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-desc">A mix of recall and application</div>
+                </div>
             </div>
 
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
@@ -256,7 +338,7 @@
                     <input type="number" id="vsaq-count" value="2" min="0" max="10">
                 </div>
                 <div style="flex:1; min-width: 100px;">
-                    <label># SAQs (10 marks)</label>
+                    <label># SAQs</label>
                     <input type="number" id="saq-count" value="1" min="0" max="3">
                 </div>
             </div>
@@ -287,14 +369,20 @@
 
     <div id="nav-sidebar" class="nav-sidebar"></div>
 
+    <button id="floating-submit" class="fab-submit" onclick="submitQuiz()" title="Submit All Answers">✓</button>
+
     <div id="quiz-screen" class="hidden">
         <div id="sticky-score">
             <div style="display:flex; flex-direction:column; align-items:flex-start; font-size:0.8rem;">
                 <span style="font-weight: bold; font-size: 1rem;">Exam Mode</span>
                 <span id="timer-display">00:00</span>
             </div>
-            <span id="header-score-display" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px;">-/5</span>
-            <button onclick="location.reload()" style="background: white; color: var(--brand-primary); border:none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Quit</button>
+            
+            <div style="display:flex; gap:10px; align-items:center;">
+                <span id="header-score-display" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px;">-/5</span>
+                <button onclick="toggleViewMode()" class="btn-secondary btn-sm" id="view-toggle-btn" title="Toggle Single/List View">Toggle View</button>
+                <button onclick="location.reload()" style="background: white; color: var(--brand-primary); border:none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Quit</button>
+            </div>
         </div>
         <div id="questions-container"></div>
         <button onclick="submitQuiz()" class="btn btn-primary" id="submit-btn">Submit Answers</button>
@@ -309,10 +397,10 @@
         <div class="filter-matrix">
             <div class="filter-row" id="filter-type-row">
                 <span class="filter-label">Types:</span>
-                </div>
+            </div>
             <div class="filter-row" id="filter-tag-row">
                 <span class="filter-label">Topics:</span>
-                </div>
+            </div>
         </div>
 
         <div id="review-container"></div>
@@ -347,7 +435,8 @@
 
     const VALID_TAGS = ["Molecular Biology of the Cell", "Haematology", "Immunology & Infection", "Genetics"];
     const VALID_TYPES = ["SBAQ", "VSAQ", "SAQ"];
-
+    
+    // Placeholder for your training data
     const TRAIN_DATA = `
     *** SBAQ EXAMPLES (Note: AI must generate distractors for these) ***
     1. (Biochem) Reaction: Pentose/TCA Step. Correct: Ligation reaction (D). Explanation: This reaction involves the joining of two molecules using ATP, characteristic of ligases.
@@ -420,6 +509,11 @@
     // FILTER STATE
     let activeTypeFilters = [...VALID_TYPES];
     let activeTagFilters = [...VALID_TAGS];
+    
+    // VIEW & EXAM STATE
+    let isSingleView = localStorage.getItem('pom_view_mode') === 'single';
+    let currentQuestionIndex = 0;
+    let isSubmitted = false; 
 
     function getHistory() { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
     function getErrors() { return JSON.parse(localStorage.getItem(ERR_KEY) || '[]'); }
@@ -537,8 +631,12 @@
             const vsaqN = parseInt(document.getElementById('vsaq-count').value);
             const saqN = parseInt(document.getElementById('saq-count').value);
             const mixErrors = document.getElementById('mix-errors-toggle').checked;
-            const useStyle = document.getElementById('style-toggle').checked;
             const hideTags = document.getElementById('hide-tags-toggle').checked;
+            const appMode = document.getElementById('application-mode-toggle').checked;
+            const useStyle = true; 
+
+            // RESET EXAM STATE
+            isSubmitted = false;
             
             // ANALYTICS TRACKING
             if (typeof gtag === 'function') {
@@ -548,11 +646,8 @@
                 if (saqN > 0) gtag('event', 'gen_saq', { 'event_category': 'Exam', 'value': saqN });
             }
 
-            // AUTO-SAVE API KEY
             const key = document.getElementById('api-key').value;
-            if (key) {
-                localStorage.setItem('pom_api_key', key);
-            }
+            if (key) { localStorage.setItem('pom_api_key', key); }
 
             let reviewQuestions = [];
             if (mixErrors) {
@@ -571,6 +666,11 @@
                 const notes = document.getElementById('notes-input').value;
                 let styleInstruction = "";
                 if(useStyle) { styleInstruction = `STYLE GUIDE (Mimic this EXACTLY):\n${TRAIN_DATA}`; }
+
+                let modeInstruction = "FOCUS: 100% Direct Recall questions (Definitions, Facts).";
+                if(appMode) {
+                    modeInstruction = "FOCUS: 50% Direct Recall and 50% Application/Vignette style questions. For Application, create a clinical or experimental scenario where the answer can be DEDUCED from the text (do not hallucinate outside facts). If the source text is too dry, default back to Recall.";
+                }
 
                 let saqInstruction = "";
                 let saqJsonTemplate = "";
@@ -613,6 +713,9 @@
                 3. DIFFICULTY: Options must be homogeneous in tone. Avoid "positive" vs "negative" outliers where one option clearly stands out.
                 4. ANTI-LEAKAGE: Ensure the question stem of one question does not reveal the answer to another question generated in this batch.
                 5. EXPLANATION FORMAT: In the 'explanation' field, you MUST use HTML tags (<br>, <b>) to format the text. Structure it as: "<b>Correct:</b> [Reason]. <br><br><b>Why others are wrong:</b><br>• Option A: [Reason]<br>• Option B: [Reason]..."
+                6. FACTUAL EXPLANATIONS: Do NOT use phrases like "The text states" or "According to the image". State the explanation as objective scientific fact.
+                
+                ${modeInstruction}
 
                 TYPES:
                 1. SBAQ: Must include 5 options (A-E). "correctAnswer" MUST be the EXACT option text string.
@@ -630,7 +733,6 @@
                 const parts = [{text: prompt}];
                 if(notes) parts.push({text: "NOTES:\n"+notes});
                 parts.push(...fileParts);
-                // Key is already retrieved above
                 const model = document.getElementById('model-select').value;
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
                     method: 'POST',
@@ -688,6 +790,61 @@
         });
     }
 
+    // --- VIEW MODE & EXCLUSION LOGIC (NEW v6.6) ---
+
+    function toggleViewMode() {
+        saveActiveState();
+        isSingleView = !isSingleView;
+        localStorage.setItem('pom_view_mode', isSingleView ? 'single' : 'list');
+        
+        // Check if we are in review mode or exam mode
+        const isReview = !document.getElementById('review-screen').classList.contains('hidden');
+        const containerId = isReview ? 'review-container' : 'questions-container';
+        
+        // Pass 'isReview' explicitly, and check hide-tags only if NOT in review
+        const hideTags = isReview ? false : document.getElementById('hide-tags-toggle').checked;
+        
+        renderExam(currentExamData, containerId, isReview, hideTags);
+        
+        // IMPORTANT: If we are in Exam Mode and already submitted, we must
+        // re-run the submission logic to show feedback/colors again.
+        if (!isReview && isSubmitted) {
+            submitQuiz(true); // true = re-render mode
+        }
+    }
+
+    function prevQuestion() {
+        if(currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            updateSingleView();
+        }
+    }
+
+    function nextQuestion() {
+        if(currentQuestionIndex < currentExamData.length - 1) {
+            currentQuestionIndex++;
+            updateSingleView();
+        }
+    }
+
+    function updateSingleView() {
+        // Hide all cards, show current
+        document.querySelectorAll('.q-card').forEach((card, idx) => {
+            card.classList.toggle('hidden', idx !== currentQuestionIndex);
+        });
+        
+        // Update Sidebar Dots active state manually since intersection observer doesn't work well here
+        document.querySelectorAll('.nav-dot').forEach((dot, idx) => {
+            dot.classList.toggle('active-dot', idx === currentQuestionIndex);
+        });
+    }
+
+    function toggleExclusion(qIndex, optIndex, event) {
+        event.stopPropagation(); // Prevent radio selection
+        const optionDiv = document.getElementById(`opt-${qIndex}-${optIndex}`);
+        optionDiv.classList.toggle('excluded');
+    }
+
     function promptChangeTag(index) {
         saveActiveState(); 
 
@@ -709,6 +866,7 @@
             applyFilters(); 
         } else {
             renderExam(currentExamData, 'questions-container', false, hideTags);
+            if(isSubmitted) submitQuiz(true);
         }
     }
 
@@ -717,44 +875,106 @@
         container.innerHTML = '';
         currentMaxScore = 0; 
         
+        // FORCE LIST VIEW IF IN REVIEW MODE
+        const effectiveSingleView = isReviewMode ? false : isSingleView;
+
+        // Update Header Button Text
+        const viewBtn = document.getElementById('view-toggle-btn');
+        if(viewBtn) viewBtn.innerText = 'Toggle View';
+        
+        // MANAGE SUBMIT BUTTONS
+        const fab = document.getElementById('floating-submit');
+        const mainSubmit = document.getElementById('submit-btn');
+        
+        if (!isReviewMode && !isSubmitted) {
+            // Exam Mode, Not Submitted: Show one based on view
+            if (fab) fab.style.display = effectiveSingleView ? 'flex' : 'none';
+            if (mainSubmit) mainSubmit.style.display = effectiveSingleView ? 'none' : 'block';
+        } else {
+            // Review Mode OR Submitted: Hide both
+            if (fab) fab.style.display = 'none';
+            if (mainSubmit) mainSubmit.style.display = 'none';
+        }
+
         const nav = document.getElementById('nav-sidebar');
         nav.innerHTML = '';
+        
+        if(effectiveSingleView) nav.classList.add('bottom-mode');
+        else nav.classList.remove('bottom-mode');
+
         if(!isReviewMode) {
             nav.style.display = 'flex';
-            data.forEach((_, i) => {
-                nav.innerHTML += `<div class="nav-dot" id="dot-${i}" onclick="document.getElementById('card-${i}').scrollIntoView({behavior:'smooth'})"><span class="nav-tooltip">Q${i+1}</span></div>`;
+            if(effectiveSingleView) nav.innerHTML += `<button class="nav-arrow" onclick="prevQuestion()">◀</button>`;
+
+            // CRITICAL FIX: Loop variable is now 'q' instead of '_' to prevent crash
+            data.forEach((q, i) => {
+                let onClick = effectiveSingleView 
+                    ? `currentQuestionIndex = ${i}; updateSingleView();` 
+                    : `document.getElementById('card-${i}').scrollIntoView({behavior:'smooth'})`;
+                
+                // DETERMINE DOT CLASS (The Fix)
+                let dotClass = "nav-dot";
+                
+                // 1. If Submitted/Marked (Red/Green)
+                if (isSubmitted) {
+                    // Re-calculate correctness roughly to color the dot
+                    let isCorrect = false;
+                    if(q.type === 'SAQ') {
+                         if(q.activeUserAnswer && q.activeUserAnswer.length > 0) dotClass += " answered";
+                    } else if (q.activeUserAnswer) {
+                        // Simple re-check for SBAQ/VSAQ color
+                        let ans = q.activeUserAnswer.toLowerCase().trim();
+                        let corr = (q.correctAnswer || q.acceptedAnswers[0]).toLowerCase().trim();
+                        // Strip A. B. etc for comparison
+                        ans = ans.replace(/^(option\s+)?[a-e][\.\)\s]\s*/, '');
+                        corr = corr.replace(/^(option\s+)?[a-e][\.\)\s]\s*/, '');
+                        
+                        if(q.type === 'VSAQ') {
+                             if(q.acceptedAnswers.some(a => a.toLowerCase().includes(q.activeUserAnswer.toLowerCase()))) dotClass += " correct";
+                             else dotClass += " wrong";
+                        } else {
+                            if(ans === corr || q.activeUserAnswer.toLowerCase() === (q.correctAnswer||"").toLowerCase()) dotClass += " correct";
+                            else dotClass += " wrong";
+                        }
+                    }
+                } 
+                // 2. If just Answered (Blue)
+                else if (q.activeUserAnswer && (q.activeUserAnswer.length > 0 || (Array.isArray(q.activeUserAnswer) && q.activeUserAnswer.some(x=>x)))) {
+                    dotClass += " answered";
+                }
+
+                nav.innerHTML += `<div class="${dotClass}" id="dot-${i}" onclick="${onClick}"><span class="nav-tooltip">Q${i+1}</span></div>`;
             });
+
+            if(effectiveSingleView) nav.innerHTML += `<button class="nav-arrow" onclick="nextQuestion()">▶</button>`;
+
         } else {
             nav.style.display = 'none';
         }
 
-        // SCROLL SPY LOGIC
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.6 // 60% of card visible
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Remove active from all dots
-                    document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active-dot'));
-                    // Add active to current
-                    const id = entry.target.id.split('-')[1];
-                    const dot = document.getElementById(`dot-${id}`);
-                    if(dot) dot.classList.add('active-dot');
-                }
-            });
-        }, observerOptions);
+        // SCROLL SPY LOGIC (Only active in List View)
+        let observer;
+        if (!effectiveSingleView) {
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.6 };
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active-dot'));
+                        const id = entry.target.id.split('-')[1];
+                        const dot = document.getElementById(`dot-${id}`);
+                        if(dot) dot.classList.add('active-dot');
+                    }
+                });
+            }, observerOptions);
+        }
 
         data.forEach((q, i) => {
             const div = document.createElement('div');
             div.className = 'q-card';
             div.id = `card-${i}`;
             
-            // Observe for scroll spy
-            observer.observe(div);
+            if(effectiveSingleView && i !== currentQuestionIndex) div.classList.add('hidden');
+            if(!effectiveSingleView && observer) observer.observe(div);
             
             let tagDisplay = q.tag || "Uncategorized";
             let tagClass = "badge";
@@ -766,13 +986,16 @@
             if(q.isReview) badges += `<span class="badge" style="background:var(--flag-bg); color:var(--flag-text);">SRS Review</span>`;
 
             let contentHTML = '';
-            const inputAction = !isReviewMode ? `onchange="markNavAnswered(${i})"` : '';
+            // Only allow marking Nav answered if NOT in review AND NOT submitted
+            const inputAction = (!isReviewMode && !isSubmitted) ? `onchange="markNavAnswered(${i})"` : '';
 
             const getVal = (def = '') => {
                 if (isReviewMode && q.userLastAnswer) return q.userLastAnswer;
                 if (!isReviewMode && q.activeUserAnswer) return q.activeUserAnswer;
                 return def;
             };
+
+            const isDisabled = isReviewMode || isSubmitted ? 'disabled' : '';
 
             if(q.type === 'SAQ') {
                 currentMaxScore += 10;
@@ -785,8 +1008,8 @@
                     <div class="saq-part">
                         <strong>Part ${pIndex+1} (${part.marks} marks)</strong><br>
                         ${part.question}<br>
-                        <textarea style="margin-top:10px; height:60px;" placeholder="Type answer here..." oninput="autoResize(this); markNavAnswered(${i})" ${isReviewMode ? 'disabled' : ''}>${val}</textarea>
-                        <div id="saq-mark-${i}-${pIndex}" class="marking-scheme" style="${isReviewMode ? 'display:block' : ''}">
+                        <textarea style="margin-top:10px; height:60px;" placeholder="Type answer here..." oninput="autoResize(this); markNavAnswered(${i})" ${isDisabled}>${val}</textarea>
+                        <div id="saq-mark-${i}-${pIndex}" class="marking-scheme" style="${(isReviewMode || isSubmitted) ? 'display:block' : ''}">
                             <strong>Model Answer (Tick marks earned):</strong><br>
                             ${part.model_answer.map((point) => `
                                 <label class="mark-point"><input type="checkbox" onchange="updateSAQScore(${i})"> ${point}</label>
@@ -801,7 +1024,7 @@
                 
                 const userSel = getVal(); 
 
-                opts.forEach(opt => {
+                opts.forEach((opt, optIndex) => {
                     const val = typeof opt === 'string' ? opt : JSON.stringify(opt);
                     const clean = val.replace(/^[A-E]\.\s*/, '').trim();
                     
@@ -811,20 +1034,21 @@
                          if(clean.toLowerCase() === cleanUser) isChecked = true;
                     }
 
-                    contentHTML += `<div class="option-item" style="${isChecked ? 'border-color:var(--brand-primary); background:rgba(0,33,71,0.05);' : ''}">
-                            <label><input type="radio" name="q${i}" value="${clean.replace(/"/g, '&quot;')}" ${isChecked?'checked':''} ${isReviewMode?'disabled':''} ${inputAction}> ${clean}</label>
+                    contentHTML += `<div class="option-item" id="opt-${i}-${optIndex}" style="${isChecked ? 'border-color:var(--brand-primary); background:rgba(0,33,71,0.05);' : ''}">
+                            <label><input type="radio" name="q${i}" value="${clean.replace(/"/g, '&quot;')}" ${isChecked?'checked':''} ${isDisabled} ${inputAction}> ${clean}</label>
+                            <button class="exclude-btn" onclick="toggleExclusion(${i}, ${optIndex}, event)" title="Exclude Answer">✕</button>
                         </div>`;
                 });
                 contentHTML += `</div>`;
             } else {
                 currentMaxScore += 1;
                 const val = getVal();
-                contentHTML = `<input type="text" id="input-${i}" placeholder="Max 4 words..." value="${val}" onkeyup="checkWordCount(${i}); markNavAnswered(${i})" ${isReviewMode?'disabled':''}>
+                contentHTML = `<input type="text" id="input-${i}" placeholder="Max 4 words..." value="${val}" onkeyup="checkWordCount(${i}); markNavAnswered(${i})" ${isDisabled}>
                     <span id="count-${i}" class="word-count">0/4 words</span>`;
             }
 
             let feedbackContent = '';
-            if (isReviewMode && q.type !== 'SAQ') {
+            if ((isReviewMode || isSubmitted) && q.type !== 'SAQ') {
                 feedbackContent = `<strong>Correct:</strong> ${q.correctAnswer || q.acceptedAnswers}<br><br><strong>Analysis:</strong><br>${q.explanation}`;
             }
 
@@ -832,10 +1056,12 @@
                 <div class="q-header"><div>${badges}</div><button class="flag-btn" onclick="toggleFlag(${i}, this)">🚩</button></div>
                 <h3 style="margin-top:0">${i+1}. ${q.type === 'SAQ' ? 'Short Answer Question' : q.question}</h3>
                 ${contentHTML}
-                <div id="feedback-${i}" class="feedback-box" style="${isReviewMode && q.type !== 'SAQ' ? 'display:block; background:rgba(0,0,0,0.03); color:var(--text-main); border:1px solid var(--border-subtle);' : ''}">${feedbackContent}</div>
+                <div id="feedback-${i}" class="feedback-box" style="${(isReviewMode || isSubmitted) && q.type !== 'SAQ' ? 'display:block; background:rgba(0,0,0,0.03); color:var(--text-main); border:1px solid var(--border-subtle);' : ''}">${feedbackContent}</div>
             `;
             container.appendChild(div);
         });
+
+        if(effectiveSingleView) updateSingleView();
 
         if(!isReviewMode) {
             document.getElementById('setup-screen').classList.add('hidden');
@@ -843,7 +1069,9 @@
             document.getElementById('quiz-screen').classList.remove('hidden');
             document.getElementById('sticky-score').style.display = 'flex';
             document.getElementById('header-score-display').innerText = `0/${currentMaxScore}`;
-            if(!currentExamData.some(q => q.activeUserAnswer)) window.scrollTo(0,0);
+            
+            // Auto scroll to top only if this is a fresh start and not a re-render
+            if(!currentExamData.some(q => q.activeUserAnswer) && !effectiveSingleView && !isSubmitted) window.scrollTo(0,0);
         }
     }
 
@@ -885,8 +1113,12 @@
         }
     }
 
-    function submitQuiz() {
-        clearInterval(timerInterval);
+    function submitQuiz(isReRender = false) {
+        if (!isReRender) {
+            clearInterval(timerInterval);
+            isSubmitted = true;
+        }
+
         let score = 0;
         
         currentExamData.forEach((q, i) => {
@@ -895,10 +1127,14 @@
             if(q.type === 'SAQ') {
                 const schemes = document.querySelectorAll(`#card-${i} .marking-scheme`);
                 schemes.forEach(s => s.style.display = 'block');
-                const inputs = document.querySelectorAll(`#card-${i} textarea`);
-                const answers = Array.from(inputs).map(inp => inp.value);
-                saveError(q, answers);
-                if(dot) { dot.classList.remove('answered'); dot.classList.add('wrong'); }
+                if(!isReRender) {
+                    const inputs = document.querySelectorAll(`#card-${i} textarea`);
+                    const answers = Array.from(inputs).map(inp => inp.value);
+                    saveError(q, answers);
+                }
+                if(dot && !dot.classList.contains('correct') && !dot.classList.contains('partial')) { 
+                    dot.classList.remove('answered'); dot.classList.add('wrong'); 
+                }
                 return; 
             }
 
@@ -940,12 +1176,13 @@
             
             if(isCorrect) {
                 score++;
-                removeError(q.question); 
+                if(!isReRender) removeError(q.question); 
             } else {
-                saveError(q, userAns || "No Answer");
+                if(!isReRender) saveError(q, userAns || "No Answer");
             }
             
-            saveHistoryEntry(q, isCorrect);
+            if(!isReRender) saveHistoryEntry(q, isCorrect);
+            
             if(dot) { 
                 dot.classList.remove('answered'); 
                 if(isCorrect) dot.classList.add('correct'); 
@@ -963,13 +1200,16 @@
 
         currentUserScore = score; 
         updateSAQScore(); 
-        document.getElementById('submit-btn').style.display = 'none';
         
-        if(!currentExamData.some(q => q.type === 'SAQ')) {
+        // Hide all submit buttons if submitted
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('floating-submit').style.display = 'none';
+        
+        if(!isReRender && !currentExamData.some(q => q.type === 'SAQ')) {
             const pct = Math.round((score/currentMaxScore)*100);
             showResultModal(pct, score, currentMaxScore);
             if(pct > 70) confetti();
-        } else {
+        } else if (!isReRender) {
             showCustomAlert("Self Marking Required", "Please self-mark the SAQ sections by ticking the boxes for points achieved.");
         }
     }
@@ -982,7 +1222,7 @@
         updateSAQScore();
     }
     
-    // --- CUSTOM MODAL SYSTEM (REPLACES WEB ALERTS) ---
+    // --- CUSTOM MODAL SYSTEM ---
 
     function showCustomAlert(title, message) {
         const modal = document.getElementById('generic-modal');
@@ -1050,37 +1290,96 @@
             <div class="instruction-section">
                 <h3>2. Uploading Content</h3>
                 <p><strong>Supported Files:</strong> PDF, PPTX, DOCX, TXT, and Images.</p>
-                <p><strong>How it works:</strong> Drag and drop your lecture slides. The app extracts text and images to generate questions based <em>strictly</em> on that content.</p>
+                <p><strong>How it works:</strong> Drag and drop your lecture slides. The app extracts text and images to generate questions based strictly on that content.</p>
             </div>
-            
+
             <div class="instruction-section">
                 <h3>3. Exam Configuration</h3>
                 <ul>
-                    <li><strong>Questions:</strong> Choose the number of SBAQ (Single Best Answer), VSAQ (Very Short Answer), and SAQ (Short Answer - 10 marks).</li>
-                    <li><strong>Spaced Repetition:</strong> Toggle this to include questions you previously got wrong in the new exam session.</li>
+                    <li><strong>Questions:</strong> Choose the number of SBAQ, VSAQ, and SAQ.</li>
+                    <li><strong>SRS Logic:</strong> Toggle this to include questions you previously got wrong in the new exam session.</li>
+                    <li><strong>Application Mode:</strong> Toggle ON for a mix of clinical scenarios and direct recall questions.</li>
                     <li><strong>Hide Tags:</strong> Use this for "Mock Exam" conditions where you don't want topic hints.</li>
                 </ul>
             </div>
 
             <div class="instruction-section">
                 <h3>4. Taking the Exam</h3>
-                <p>Use the sidebar to navigate questions. Flag questions for review using the 🚩 icon.</p>
+                <p>Use the sidebar (or bottom bar in Single View) to navigate questions. Flag questions for review using the 🚩 icon.</p>
+                <ul>
+                    <li><strong>Toggle View:</strong> Switch between standard scrolling list or "Single View".</li>
+                    <li><strong>✕ Exclusions:</strong> Visually cross out wrong answers in SBAQs.</li>
+                </ul>
                 <p><strong>SAQs:</strong> These are self-marked. After submitting, tick the checkboxes for the points you achieved based on the model answer.</p>
             </div>
 
             <div class="instruction-section">
                 <h3>5. Mistake Bank & Exports</h3>
                 <p>Any question you get wrong is saved to the "Review Mistakes" library.</p>
-                <p><strong>HTML Export:</strong> Download a beautifully formatted "Mistake Bank" file to keep a permanent record of your revision areas.</p>
-                <p><strong>Tagging:</strong> Click the colored topic badge on any question to manually change its category if the AI mislabeled it.</p>
+                <ul>
+                   <li><strong>HTML Export:</strong> Download a formatted "Mistake Bank" file.</li>
+                   <li><strong>Tagging:</strong> Click the colored topic badge on any question to manually change its category.</li>
+                </ul>
             </div>
 
             <div class="disclaimer-box">
                 <strong>⚠️ Disclaimer:</strong><br>
-                This tool uses Generative AI (Gemini Flash). While strict controls are in place to prevent hallucinations, mistakes can still occur. Always verify answers against your official lecture notes. This tool is for revision retrieval practice, not a replacement for primary study.
+                This tool uses Generative AI (Gemini Flash). While strict controls are in place to prevent hallucinations, mistakes can still occur. Always verify answers against your official lecture notes.
             </div>
 
             <button class="btn btn-primary" onclick="closeGenericModal()" style="margin-top:20px; width:100%;">Close Guide</button>
+        `;
+        modal.style.display = 'flex';
+    }
+
+    function openChangelog() {
+        const modal = document.getElementById('generic-modal');
+        const content = document.getElementById('modal-inner-content');
+        content.innerHTML = `
+            <h2 style="color:var(--brand-primary); margin-top:0;">Version History</h2>
+            <div style="max-height: 60vh; overflow-y: auto;">
+                <table class="changelog-table">
+                    <tr><th>Version</th><th>Changes</th></tr>
+                    <tr><td><span class="version-badge">v6.6</span></td><td>
+                        • <strong>Application Mode:</strong> New toggle for 50/50 Vignette/Recall mix.<br>
+                        • <strong>Compact UI:</strong> Settings re-arranged into a horizontal grid.<br>
+                        • <strong>Refinements:</strong> "Imperial Style" is now always on. Fixed table borders.
+                    </td></tr>
+                    <tr><td><span class="version-badge">v6.5</span></td><td>
+                        • <strong>Exclusions:</strong> Visual strikethrough (✕) for SBAQs.<br>
+                        • <strong>Single View:</strong> Integrated bottom navigation.<br>
+                        • <strong>UI Overhaul:</strong> Floating submit button, integrated toggle view button.
+                    </td></tr>
+                    <tr><td><span class="version-badge">v6.4</span></td><td>• <strong>Analytics:</strong> Granular tracking.<br>• <strong>Bug Fixes:</strong> "Wrong Option" placeholders fixed.</td></tr>
+                    <tr><td><span class="version-badge">v6.3</span></td><td>• <strong>HTML Export:</strong> Faster, cleaner download format.</td></tr>
+                    <tr><td><span class="version-badge">v6.2</span></td><td>• <strong>Strict Scope:</strong> Added negative constraints to prevent AI hallucinations.<br>• <strong>Custom UI:</strong> Replaced native alerts with styled modals.<br>• <strong>Onboarding:</strong> Added "How to Use" guide.</td></tr>
+                    <tr><td><span class="version-badge">v6.1</span></td><td>• <strong>State Saving:</strong> Fixed bug where changing tags wiped answers.<br>• <strong>PDF Engine:</strong> Integrated html2pdf for printable exports.</td></tr>
+                    <tr><td><span class="version-badge">v6.0</span></td><td>• <strong>SRS:</strong> Spaced Repetition logic.<br>• <strong>Exam Tools:</strong> Timer, Quick Nav Sidebar.<br>• <strong>Tagging:</strong> Strict topic categorization.<br>• <strong>0 SAQ Fix:</strong> Logic prevents SAQ generation if count is 0.</td></tr>
+                    <tr><td><span class="version-badge">v5.4</span></td><td>• <strong>SAQ Saving:</strong> SAQ answers/scores now saved to the Error Bank.<br>• <strong>Filters:</strong> Toolbar added to Review Screen.<br>• <strong>Auto-Expand:</strong> SAQ text areas grow automatically.</td></tr>
+                    <tr><td><span class="version-badge">v5.3</span></td><td>• <strong>The Golden Rule:</strong> "Scientific Accuracy required, but Scope restricted."<br>• <strong>Context:</strong> AI knows general medical context but won't test it unless in slides.</td></tr>
+                    <tr><td><span class="version-badge">v5.2</span></td><td>• <strong>No Popups:</strong> Replaced all browser alerts with custom modals.<br>• <strong>Layout:</strong> Preserved loading spinner positions.</td></tr>
+                    <tr><td><span class="version-badge">v5.1</span></td><td>• <strong>Prefix Stripping:</strong> Removes "A.", "B." from correct answers.<br>• <strong>Scientific Accuracy:</strong> Prompt updated to differentiate enzyme substrates.</td></tr>
+                    <tr><td><span class="version-badge">v5.0</span></td><td>• <strong>SAQ Support:</strong> Added 10-Mark Multi-Part Questions.<br>• <strong>Self-Marking:</strong> Users grade themselves via checkboxes.<br>• <strong>Distractors:</strong> AI instructed to generate plausible wrong options.</td></tr>
+                    <tr><td><span class="version-badge">v4.3</span></td><td>• <strong>Export Errors:</strong> Downloads a "Revision Sheet" style text file.<br>• <strong>Export History:</strong> Downloads a detailed log of every attempt.</td></tr>
+                    <tr><td><span class="version-badge">v4.2</span></td><td>• <strong>Additive Mixing:</strong> "Mix Errors" adds extra old questions.<br>• <strong>Review Screen:</strong> Dedicated page to review mistakes with filters.<br>• <strong>Loading UI:</strong> Improved UX text.</td></tr>
+                    <tr><td><span class="version-badge">v4.1</span></td><td>• <strong>"I Was Right":</strong> Retroactively mark VSAQ correct.<br>• <strong>Word Counter:</strong> Live "0/4 words" counter for VSAQs.<br>• <strong>Brain Restore:</strong> Restored full training data.</td></tr>
+                    <tr><td><span class="version-badge">v4.0</span></td><td>• <strong>Modern Dashboard:</strong> Home screen with stats.<br>• <strong>Smart Mix:</strong> Toggle to mix old errors.<br>• <strong>Exam Tools:</strong> Added Flag button and Sticky Score.<br>• <strong>UX:</strong> Custom animated Result Modals.</td></tr>
+                    <tr><td><span class="version-badge">v3.6</span></td><td>• <strong>Model Rotation:</strong> Added rotation logic between Flash models to bypass rate limits.</td></tr>
+                    <tr><td><span class="version-badge">v3.5</span></td><td>• <strong>Answer Search:</strong> Code looks for answers in all possible JSON fields.<br>• <strong>Explanations:</strong> Mandatory "Explanation:" fields for VSAQs.</td></tr>
+                    <tr><td><span class="version-badge">v3.4</span></td><td>• <strong>Forbidden Rule:</strong> "DO NOT generate True/False questions."<br>• <strong>Rescue Logic:</strong> Extracts options if AI hides them in stem.<br>• <strong>Error Feedback:</strong> Explicit error messages.</td></tr>
+                    <tr><td><span class="version-badge">v3.3</span></td><td>• <strong>Force List:</strong> Slices text blocks into separate options.<br>• <strong>Smart Matching:</strong> Cleans user selection for better grading.<br>• <strong>Clickable Areas:</strong> Entire white box clickable.</td></tr>
+                    <tr><td><span class="version-badge">v3.2</span></td><td>• <strong>JSON Safety Check:</strong> Detects hidden wrapper objects.<br>• <strong>Crash Protection:</strong> Try...catch blocks for submission.<br>• <strong>Missing Answer Handling:</strong> Defaults to placeholder.</td></tr>
+                    <tr><td><span class="version-badge">v3.1</span></td><td>• <strong>Native Support:</strong> JSZip/Mammoth for .pptx/.docx.<br>• <strong>Media Mining:</strong> Unzips PowerPoint to extract images.<br>• <strong>Context Aware:</strong> Sends slide text AND images.</td></tr>
+                    <tr><td><span class="version-badge">v3.0</span></td><td>• <strong>Upload Zone:</strong> Support for PDFs/Images.<br>• <strong>Hybrid Input:</strong> Paste text AND upload files.<br>• <strong>Base64 Processor:</strong> In-browser file conversion.</td></tr>
+                    <tr><td><span class="version-badge">v2.1</span></td><td>• <strong>Auto-Strip:</strong> Removes "A."/"B." from answer text.<br>• <strong>Re-Labeling:</strong> Assigns fresh labels after shuffle.<br>• <strong>Result:</strong> Clean option list display.</td></tr>
+                    <tr><td><span class="version-badge">v2.0</span></td><td>• <strong>Strict Blue Theme:</strong> Professional "Imperial Blue" UI.<br>• <strong>Dark Mode:</strong> Sun/Moon toggle with memory.<br>• <strong>Adaptive UI:</strong> High contrast adjustments.</td></tr>
+                    <tr><td><span class="version-badge">v1.3</span></td><td>• <strong>Massive Dataset:</strong> Hardcoded 25 example questions.<br>• <strong>Model Support:</strong> Updated dropdowns.<br>• <strong>Reset Tools:</strong> Added "Clear Logs" button.</td></tr>
+                    <tr><td><span class="version-badge">v1.2</span></td><td>• <strong>Hardcoded Examples:</strong> Embedded perfect examples.<br>• <strong>Crash Prevention:</strong> Target stable API endpoints.<br>• <strong>Style Toggle:</strong> Added "Use Imperial Style Guide".</td></tr>
+                    <tr><td><span class="version-badge">v1.1</span></td><td>• <strong>Automatic Logging:</strong> Questions saved in browser.<br>• <strong>Error Tracking:</strong> Incorrect list.<br>• <strong>Review Mode:</strong> Retry wrong answers.<br>• <strong>Duplicate Check:</strong> Prevent repetition.</td></tr>
+                    <tr><td><span class="version-badge">v1.0</span></td><td>• <strong>Launch:</strong> Core SBAQ/VSAQ generation logic.<br>• <strong>Prompt Engineering:</strong> Initial parameters.<br>• <strong>Backend:</strong> Gemini API integration.<br>• <strong>Controls:</strong> Quantity selectors.</td></tr>
+                </table>
+            </div>
+            <button class="btn btn-primary" onclick="closeGenericModal()" style="margin-top:20px; width:100%;">Close</button>
         `;
         modal.style.display = 'flex';
     }
