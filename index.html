@@ -692,42 +692,47 @@
                 }
 
                 const prompt = `
-                You are an Imperial College London medical examiner. Create exam questions based on content.
-                
-                CRITICAL - STRICT SCOPE CONTAINMENT: 
-                - You must ONLY generate questions based on the specific text and images provided in the 'user' parts of this prompt.
-                - DO NOT use your outside medical knowledge to create questions about topics not present in the files.
-                - If the files do not mention a specific disease, protein, or pathway, DO NOT ask about it, even if it is relevant to the general field.
-                - If there is not enough content, generate fewer questions rather than hallucinating content.
+                    You are an Imperial College London medical examiner. Create exam questions based on content.
+                    
+                    CRITICAL - STRICT SCOPE CONTAINMENT: 
+                    - You must ONLY generate questions based on the specific text and images provided in the 'user' parts of this prompt.
+                    - DO NOT use your outside medical knowledge to create questions about topics not present in the files.
+                    - If the files do not mention a specific disease, protein, or pathway, DO NOT ask about it.
 
-                REQUIRED: ${sbaqN} SBAQs, ${vsaqN} VSAQs, and ${saqN} SAQs.
-                IMPORTANT TAGGING: Assign strictly one of these tags to "tag" field: 
-                - "Molecular Biology of the Cell"
-                - "Haematology"
-                - "Immunology & Infection"
-                - "Genetics"
-                
-                CRITICAL RULES FOR QUALITY CONTROL:
-                1. DISTRACTORS: Must be of the SAME CATEGORY and DATA TYPE as the correct answer. (e.g. if the answer is a time '20 mins', distractors must be other times '10 mins', '1 hour'. Do NOT use random words like 'Bacteria' or 'HIV').
-                2. META-LANGUAGE BAN: NEVER use phrases like "According to the text", "The notes mention", "As seen in the image". Write as if you are a standard external exam board.
-                3. DIFFICULTY: Options must be homogeneous in tone. Avoid "positive" vs "negative" outliers where one option clearly stands out.
-                4. ANTI-LEAKAGE: Ensure the question stem of one question does not reveal the answer to another question generated in this batch.
-                5. EXPLANATION FORMAT: In the 'explanation' field, you MUST use HTML tags (<br>, <b>) to format the text. Structure it as: "<b>Correct:</b> [Reason]. <br><br><b>Why others are wrong:</b><br>• Option A: [Reason]<br>• Option B: [Reason]..."
-                6. FACTUAL EXPLANATIONS: Do NOT use phrases like "The text states" or "According to the image". State the explanation as objective scientific fact.
-                
-                ${modeInstruction}
+                    REQUIRED: ${sbaqN} SBAQs, ${vsaqN} VSAQs, and ${saqN} SAQs.
+                    IMPORTANT TAGGING: Assign strictly one of these tags to "tag" field: 
+                    - "Molecular Biology of the Cell"
+                    - "Haematology"
+                    - "Immunology & Infection"
+                    - "Genetics"
+                    
+                    CRITICAL RULES FOR QUALITY CONTROL:
+                    1. DISTRACTORS: Must be of the SAME CATEGORY and DATA TYPE as the correct answer. (e.g. if the answer is a time '20 mins', distractors must be other times '10 mins', '1 hour').
+                    2. META-LANGUAGE BAN: NEVER use phrases like "According to the text", "The notes mention". Write as if you are a standard external exam board.
+                    3. DIFFICULTY: Options must be homogeneous in tone. Avoid "positive" vs "negative" outliers.
+                    4. EXPLANATION FORMAT: Use HTML tags (<br>, <b>) for formatting. Structure: "<b>Correct:</b> [Reason]. <br><br><b>Why others are wrong:</b>..."
+                    
+                    ${modeInstruction}
 
-                TYPES:
-                1. SBAQ: Must include 5 options (A-E). "correctAnswer" MUST be the EXACT option text string.
-                2. VSAQ: 1-4 words max answer.
-                ${saqInstruction}
-                CRITICAL SAQ RULE: The number of items in the 'model_answer' array MUST exactly match the 'marks' for that part. (e.g. If marks=3, provide exactly 3 marking points).
-                ${styleInstruction}
-                JSON FORMAT ONLY:
-                [
-                  {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"..."},
-                  {"type":"VSAQ", "tag":"...", "question":"...", "acceptedAnswers":["..."], "explanation":"..."}${saqN > 0 ? ',' : ''}
-                  ${saqJsonTemplate}
+                    TYPES:
+                    1. SBAQ: Must include 5 options (A-E). "correctAnswer" MUST be the EXACT option text string.
+                    2. VSAQ: 1-4 words max answer.
+                    ${saqInstruction}
+
+                    *** STRICT SAQ MARKING RULE ***
+                    You MUST enforce a 1-to-1 ratio between 'marks' and 'model_answer' items:
+                    - If "marks": 2, the "model_answer" array MUST contain exactly 2 separate strings.
+                    - If "marks": 4, the "model_answer" array MUST contain exactly 4 separate strings.
+                    - DO NOT combine multiple points into one string. Split them up so the user gets one checkbox per mark.
+                    - WRONG: "marks": 2, "model_answer": ["Cell membrane and Nucleus"] (This is only 1 item).
+                    - CORRECT: "marks": 2, "model_answer": ["Cell membrane", "Nucleus"] (This is 2 items).
+
+                    ${styleInstruction}
+                    JSON FORMAT ONLY:
+                    [
+                    {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"..."},
+                    {"type":"VSAQ", "tag":"...", "question":"...", "acceptedAnswers":["..."], "explanation":"..."}${saqN > 0 ? ',' : ''}
+                    ${saqJsonTemplate}
                 ]`;
                 
                 const parts = [{text: prompt}];
