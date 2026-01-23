@@ -270,9 +270,7 @@
       },
       {
         "name": "2.10 The peripheral nervous system",
-        "files": [
-            "lectures/BRS/Neurology & Neuroscience/Neuro_1a_Peripheral_Nervous_System.pdf"
-        ]
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_Peripheral_Nervous_System.pdf"]
       },
       {
         "name": "2.11 Disorders of the CNS",
@@ -306,7 +304,7 @@
         "files": ["lectures/BRS/Psychiatry/1a Introduction to Psychiatry II Slides.pdf"]
       },
       {
-        "name": "3.3 Intro to Psych: Anxiety, depression & self-harm, psychosis, addiction, OCD, Eating disorders OVERVIEW",
+        "name": "3.3 Intro to Psych: Anxiety, depression & self-harm, psychosis, addiction, OCD, Eating disorders",
         "files": ["lectures/BRS/Psychiatry/1a Psychosis Lecture 2025 (1).pdf"]
       }
     ],
