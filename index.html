@@ -755,9 +755,21 @@
         container.innerHTML = '';
         currentMaxScore = 0; 
 
+        // 1. Sidebar & Setup
         const nav = document.getElementById('nav-sidebar');
         nav.innerHTML = '';
+        
         if(!isReviewMode) {
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('review-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('sticky-score').style.display = 'flex';
+            document.getElementById('header-score-display').innerText = `0/${currentMaxScore}`;
+            
+            const submitBtn = document.getElementById('submit-btn');
+            if(submitBtn) submitBtn.style.display = isSubmitted ? 'none' : 'block';
+
+            // Sidebar Logic
             nav.style.display = 'flex';
             data.forEach((q, i) => {
                 let dotClass = "nav-dot";
@@ -765,59 +777,67 @@
                     if (q.type === 'SAQ') {
                          const cardChecks = document.querySelectorAll(`#card-${i} .mark-point input:checked`);
                          const totalChecks = document.querySelectorAll(`#card-${i} .mark-point input`);
-                         if(cardChecks.length === totalChecks.length && totalChecks.length > 0) dotClass += " correct";
-                         else if(cardChecks.length > 0) dotClass += " partial";
-                         else dotClass += " wrong";
+                         // Safety check for empty SAQ
+                         if(totalChecks.length > 0) {
+                             if(cardChecks.length === totalChecks.length) dotClass += " correct";
+                             else if(cardChecks.length > 0) dotClass += " partial";
+                             else dotClass += " wrong";
+                         } else { dotClass += " wrong"; }
                     } else if (q.activeUserAnswer) {
                         let isCorrect = false;
                         let corr = q.correctAnswer || (q.acceptedAnswers ? q.acceptedAnswers[0] : "");
-                        if(q.type === 'SBAQ') {
+                        if(q.type === 'SBAQ' && corr) {
                             const cleanSel = q.activeUserAnswer.toLowerCase().replace(/^(option\s+)?[a-e][\.\)\s]\s*/, '');
                             const cleanCorrect = corr.toLowerCase().replace(/^(option\s+)?[a-e][\.\)\s]\s*/, '');
                             if(cleanSel === cleanCorrect) isCorrect = true;
-                        } else {
+                        } else if (q.acceptedAnswers) {
                             if(q.acceptedAnswers.some(a => a.toLowerCase().includes(q.activeUserAnswer.toLowerCase()))) isCorrect = true;
                         }
                         dotClass += isCorrect ? " correct" : " wrong";
                     } else { dotClass += " wrong"; }
-                } else if (q.activeUserAnswer && (q.activeUserAnswer.length > 0)) { dotClass += " answered"; }
+                } else if (q.activeUserAnswer && (q.activeUserAnswer.length > 0)) {
+                    dotClass += " answered";
+                }
                 nav.innerHTML += `<div class="${dotClass}" id="dot-${i}" onclick="document.getElementById('card-${i}').scrollIntoView({behavior:'smooth'})"><span class="nav-tooltip">Q${i+1}</span></div>`;
             });
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active-dot'));
-                        const id = entry.target.id.split('-')[1];
-                        const dot = document.getElementById(`dot-${id}`);
-                        if(dot) dot.classList.add('active-dot');
-                    }
-                });
-            }, {threshold: 0.5});
-            setTimeout(() => { document.querySelectorAll('.q-card').forEach(c => observer.observe(c)); }, 100);
-        } else { nav.style.display = 'none'; }
+            
+            // Scroll Spy
+            setTimeout(() => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active-dot'));
+                            const id = entry.target.id.split('-')[1];
+                            const dot = document.getElementById(`dot-${id}`);
+                            if(dot) dot.classList.add('active-dot');
+                        }
+                    });
+                }, {threshold: 0.5});
+                document.querySelectorAll('.q-card').forEach(c => observer.observe(c));
+            }, 100);
 
-        if(!isReviewMode) {
-            document.getElementById('setup-screen').classList.add('hidden');
-            document.getElementById('review-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
-            document.getElementById('sticky-score').style.display = 'flex';
-            const submitBtn = document.getElementById('submit-btn');
-            if(submitBtn) submitBtn.style.display = isSubmitted ? 'none' : 'block';
+        } else {
+            nav.style.display = 'none';
         }
 
+        // 2. Render Cards
         data.forEach((q, i) => {
             const div = document.createElement('div');
             div.className = 'q-card';
             div.id = `card-${i}`;
+            
             let tagDisplay = q.tag || "Uncategorized";
             let tagClass = "badge";
             if(hideTags && !isReviewMode) tagClass += " hidden-tag";
+            
             let badges = `<span class="badge" style="background:#e9ecef;color:#666">${q.type}</span>`;
             badges += `<span class="${tagClass}" style="background:var(--brand-secondary); color:white; cursor:pointer;" onclick="promptChangeTag(${i})" title="Change Topic">${tagDisplay} ✎</span>`;
             if(q.isReview) badges += `<span class="badge" style="background:var(--flag-bg); color:var(--flag-text);">SRS Review</span>`;
 
             let contentHTML = '';
             const isDisabled = isReviewMode || isSubmitted ? 'disabled' : '';
+            const inputAction = (!isReviewMode && !isSubmitted) ? `onchange="markNavAnswered(${i})"` : '';
+            
             const getVal = (def = '') => {
                 if (isReviewMode && q.userLastAnswer) return q.userLastAnswer;
                 if (!isReviewMode && q.activeUserAnswer) return q.activeUserAnswer;
@@ -825,13 +845,29 @@
             };
 
             if(q.type === 'SAQ') {
-                currentMaxScore += 10;
-                contentHTML += `<div class="saq-intro">${q.intro || q.question}</div>`;
-                const savedAns = getVal([]); 
-                q.parts.forEach((part, pIndex) => {
-                    const val = savedAns[pIndex] || '';
-                    contentHTML += `<div class="saq-part"><strong>Part ${pIndex+1} (${part.marks} marks)</strong><br>${part.question}<br><textarea style="margin-top:10px; height:60px;" placeholder="Type answer here..." oninput="autoResize(this); markNavAnswered(${i})" ${isDisabled}>${val}</textarea><div id="saq-mark-${i}-${pIndex}" class="marking-scheme" style="${(isReviewMode || isSubmitted) ? 'display:block' : ''}"><strong>Model Answer:</strong><br>${part.model_answer.map((point) => `<label class="mark-point"><input type="checkbox" onchange="updateSAQScore(${i})"> ${point}</label>`).join('')}</div></div>`;
-                });
+                // SAFETY PATCH: Check if parts exist
+                if (!q.parts || !Array.isArray(q.parts)) {
+                    contentHTML = `<div style="color:red; background:#fee; padding:10px; border-radius:5px;">⚠️ Error: The AI generated a malformed SAQ question. Please flag this question.</div>`;
+                } else {
+                    currentMaxScore += 10;
+                    contentHTML += `<div class="saq-intro">${q.intro || q.question}</div>`;
+                    const savedAns = getVal([]); 
+                    q.parts.forEach((part, pIndex) => {
+                        const val = savedAns[pIndex] || '';
+                        const marks = part.marks || 1;
+                        const models = part.model_answer || [];
+                        contentHTML += `
+                        <div class="saq-part">
+                            <strong>Part ${pIndex+1} (${marks} marks)</strong><br>
+                            ${part.question}<br>
+                            <textarea style="margin-top:10px; height:60px;" placeholder="Type answer..." oninput="autoResize(this)" ${inputAction} ${isDisabled}>${val}</textarea>
+                            <div id="saq-mark-${i}-${pIndex}" class="marking-scheme" style="${(isReviewMode || isSubmitted) ? 'display:block' : ''}">
+                                <strong>Model Answer:</strong><br>
+                                ${models.map((point) => `<label class="mark-point"><input type="checkbox" onchange="updateSAQScore(${i})"> ${point}</label>`).join('')}
+                            </div>
+                        </div>`;
+                    });
+                }
             } else if(q.type === 'SBAQ') {
                 currentMaxScore += 1;
                 let opts = q.options || [];
@@ -841,25 +877,39 @@
                     const val = typeof opt === 'string' ? opt : JSON.stringify(opt);
                     const clean = val.replace(/^[A-E]\.\s*/, '').trim();
                     let isChecked = false;
-                    if(userSel) { if(clean.toLowerCase() === userSel.toLowerCase().replace(/^[A-E]\.\s*/, '').trim()) isChecked = true; }
-                    contentHTML += `<div class="option-item" id="opt-${i}-${optIndex}" style="${isChecked ? 'border-color:var(--brand-primary); background:rgba(0,33,71,0.05);' : ''}"><label><input type="radio" name="q${i}" value="${clean.replace(/"/g, '&quot;')}" ${isChecked?'checked':''} ${isDisabled} onchange="markNavAnswered(${i})"> ${clean}</label><button class="exclude-btn" onclick="toggleExclusion(${i}, ${optIndex}, event)">✕</button></div>`;
+                    if(userSel) {
+                         if(clean.toLowerCase() === userSel.replace(/^[A-E]\.\s*/, '').trim().toLowerCase()) isChecked = true;
+                    }
+                    contentHTML += `<div class="option-item" id="opt-${i}-${optIndex}" style="${isChecked ? 'border-color:var(--brand-primary); background:rgba(0,33,71,0.05);' : ''}">
+                            <label><input type="radio" name="q${i}" value="${clean.replace(/"/g, '&quot;')}" ${isChecked?'checked':''} ${isDisabled} ${inputAction}> ${clean}</label>
+                            <button class="exclude-btn" onclick="toggleExclusion(${i}, ${optIndex}, event)">✕</button>
+                        </div>`;
                 });
                 contentHTML += `</div>`;
             } else {
                 currentMaxScore += 1;
                 const val = getVal();
-                contentHTML = `<input type="text" id="input-${i}" placeholder="Max 4 words..." value="${val}" onkeyup="checkWordCount(${i})" onchange="markNavAnswered(${i})" ${isDisabled}><span id="count-${i}" class="word-count">0/4 words</span>`;
+                contentHTML = `<input type="text" id="input-${i}" placeholder="Max 4 words..." value="${val}" onkeyup="checkWordCount(${i})" ${inputAction} ${isDisabled}>
+                    <span id="count-${i}" class="word-count">0/4 words</span>`;
             }
 
             let feedbackContent = '';
-            if ((isReviewMode || isSubmitted) && q.type !== 'SAQ') feedbackContent = `<strong>Correct:</strong> ${q.correctAnswer || q.acceptedAnswers}<br><br><strong>Analysis:</strong><br>${q.explanation}`;
+            if ((isReviewMode || isSubmitted) && q.type !== 'SAQ') {
+                feedbackContent = `<strong>Correct:</strong> ${q.correctAnswer || q.acceptedAnswers}<br><br><strong>Analysis:</strong><br>${q.explanation}`;
+            }
 
-            div.innerHTML = `<div class="q-header"><div>${badges}</div><button class="flag-btn" onclick="toggleFlag(${i}, this)">🚩</button></div><h3 style="margin-top:0">${i+1}. ${q.type === 'SAQ' ? 'Short Answer Question' : q.question}</h3>${contentHTML}<div id="feedback-${i}" class="feedback-box" style="${(isReviewMode || isSubmitted) && q.type !== 'SAQ' ? 'display:block; background:rgba(0,0,0,0.03); color:var(--text-main); border:1px solid var(--border-subtle);' : ''}">${feedbackContent}</div>`;
+            div.innerHTML = `
+                <div class="q-header"><div>${badges}</div><button class="flag-btn" onclick="toggleFlag(${i}, this)">🚩</button></div>
+                <h3 style="margin-top:0">${i+1}. ${q.type === 'SAQ' ? 'Short Answer Question' : q.question}</h3>
+                ${contentHTML}
+                <div id="feedback-${i}" class="feedback-box" style="${(isReviewMode || isSubmitted) && q.type !== 'SAQ' ? 'display:block; background:rgba(0,0,0,0.03); color:var(--text-main); border:1px solid var(--border-subtle);' : ''}">${feedbackContent}</div>
+            `;
             container.appendChild(div);
         });
+        
         if(!isReviewMode) document.getElementById('header-score-display').innerText = `0/${currentMaxScore}`;
     }
-
+    
     function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
     function checkWordCount(i) {
         const inp = document.getElementById(`input-${i}`);
