@@ -777,7 +777,7 @@
                     if (q.type === 'SAQ') {
                          const cardChecks = document.querySelectorAll(`#card-${i} .mark-point input:checked`);
                          const totalChecks = document.querySelectorAll(`#card-${i} .mark-point input`);
-                         // Safety check for empty SAQ
+                         // Safety check
                          if(totalChecks.length > 0) {
                              if(cardChecks.length === totalChecks.length) dotClass += " correct";
                              else if(cardChecks.length > 0) dotClass += " partial";
@@ -845,9 +845,10 @@
             };
 
             if(q.type === 'SAQ') {
-                // SAFETY PATCH: Check if parts exist
+                // --- SAFETY PATCH IS HERE ---
                 if (!q.parts || !Array.isArray(q.parts)) {
-                    contentHTML = `<div style="color:red; background:#fee; padding:10px; border-radius:5px;">⚠️ Error: The AI generated a malformed SAQ question. Please flag this question.</div>`;
+                    // If parts are missing, show an error box instead of crashing
+                    contentHTML = `<div style="color:red; background:#fee; padding:10px; border-radius:5px;">⚠️ <strong>AI Generation Error:</strong> This question was incomplete. Please flag it or ignore it.</div>`;
                 } else {
                     currentMaxScore += 10;
                     contentHTML += `<div class="saq-intro">${q.intro || q.question}</div>`;
@@ -908,8 +909,7 @@
         });
         
         if(!isReviewMode) document.getElementById('header-score-display').innerText = `0/${currentMaxScore}`;
-    }
-    
+    }  
     function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
     function checkWordCount(i) {
         const inp = document.getElementById(`input-${i}`);
