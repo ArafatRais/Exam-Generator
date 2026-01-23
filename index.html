@@ -705,6 +705,7 @@
                   ${saqJsonTemplate}
                 ]`;
 
+                // 3. Send to API
                 const finalParts = [{text: prompt}];
                 if(trainDataCache) finalParts.push({text: "TRAINING EXAMPLES:\n" + trainDataCache});
                 finalParts.push(...parts);
@@ -717,13 +718,37 @@
                 });
                 
                 const apiData = await apiResp.json();
+                
+                // FIX FOR ERROR #2 (Reading '0')
                 if(apiData.error) throw new Error(apiData.error.message);
+                if(!apiData.candidates || apiData.candidates.length === 0) {
+                     throw new Error("AI Refused to Generate (Safety Block). Please try again.");
+                }
+
                 let txt = apiData.candidates[0].content.parts[0].text;
-                txt = txt.replace(/```json/g, '').replace(/```/g, '').trim();
-                const first = txt.indexOf('['); const last = txt.lastIndexOf(']');
-                if(first > -1) txt = txt.substring(first, last+1);
-                newQuestions = JSON.parse(txt);
+                
+                // FIX FOR ERROR #3 (Unexpected Token / JSON)
+                // This logic aggressively finds the start '[' and end ']' of the JSON array
+                const first = txt.indexOf('[');
+                const last = txt.lastIndexOf(']');
+                
+                if(first === -1 || last === -1) {
+                    throw new Error("AI did not return a valid list of questions. Try again.");
+                }
+                
+                // Cleanly slice ONLY the JSON part, ignoring "Hope this helps" text
+                txt = txt.substring(first, last + 1);
+                
+                try {
+                    newQuestions = JSON.parse(txt);
+                } catch(e) {
+                    console.error("JSON Parse Failed on:", txt);
+                    throw new Error("Data corruption in AI response. Please try again.");
+                }
             }
+
+            currentExamData = [...reviewQuestions, ...newQuestions];
+            // ... (Rest of the function stays the same)
 
             currentExamData = [...reviewQuestions, ...newQuestions];
             const typeOrder = { 'SBAQ': 1, 'VSAQ': 2, 'SAQ': 3 };
