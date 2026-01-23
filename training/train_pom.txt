@@ -1,0 +1,269 @@
+*** SBAQ EXAMPLES ***
+
+[SBAQ]
+Question: Consider the reaction in the accompanying diagram which shows a step from the pentose phosphate pathway (Succinyl CoA to Succinate). How is this reaction best described?
+Options:
+A. Group transfer reaction
+B. Hydrolytic reaction
+C. Isomerization reaction
+D. Ligation reaction requiring ATP cleavage
+E. Reduction-oxidation (REDOX) reaction
+Correct Answer: D. Ligation reaction requiring ATP cleavage
+Explanation: This reaction involves the joining of two molecules using energy (GTP/ATP), characteristic of ligase activity in the TCA cycle (Succinyl-CoA Synthetase).
+
+[SBAQ]
+Question: Consider an epidermal cell exiting from the quiescent phase (Go) of the cell cycle. Which one of the following events results in three of the four remaining events?
+Options:
+A. Activation of cyclin D-cdk 4/6 complex
+B. Binding of epidermal growth factor (EGF) to the EGF receptor
+C. Expression of cyclin D
+D. Induction of c-myc expression
+E. Sequestration of E2F transcription factor
+Correct Answer: B. Binding of epidermal growth factor (EGF) to the EGF receptor
+Explanation: EGF binding is the upstream signal (mitogen) that triggers the signaling cascade (Ras/MAPK) leading to c-myc induction, Cyclin D expression, and subsequent Cdk activation.
+
+[SBAQ]
+Question: The absorption of a buffer solution containing a pure protein is measured in a spectrophotometer using a 1 cm cuvette. The value is 19.5 units. Calculate the concentration of the protein in the buffer, given that the molar absorption coefficient of the protein is 136,390 M-1 cm-1.
+Options:
+A. 2.7 μM
+B. 2.7 mM
+C. 143 mM
+D. 143 μM
+E. 143 nM
+Correct Answer: D. 143 μM
+Explanation: Using Beer-Lambert Law (A = εcl): c = A / (ε * l). c = 19.5 / (136390 * 1) = 0.0001429 M, which converts to approximately 143 μM.
+
+[SBAQ]
+Question: A 78 year old female patient attends her GP with tiredness and pins and needles in her fingers and toes. A full blood count shows the patient to be anaemic with a haemoglobin of 95 g/l (NR 115-140 g/l) with a mean cell volume of 112 fl (NR 83-98). What mechanism and cause best explains these findings?
+Options:
+A. Reduced red cell production due to reduced vitamin B12 absorption
+B. Increased red cell destruction due to inadequate dietary folate
+C. Increased red cell destruction due to increased erythropoietin production
+D. Reduced red cell production due to reduced globin chain synthesis
+E. Reduced red cell production due to inadequate dietary iron
+Correct Answer: A. Reduced red cell production due to reduced vitamin B12 absorption
+Explanation: The high MCV (112 fl) indicates macrocytic anaemia. Combined with neurological symptoms ("pins and needles"), this is classic for B12 deficiency (pernicious anaemia), which causes production failure.
+
+[SBAQ]
+Question: What three molecules are produced from the complete beta oxidation of the 16C fatty acid palmitate?
+Options:
+A. Acetyl CoA, NADH and FADH2
+B. NADH, FADH2 and CO2
+C. NADH, FADH2 and GTP
+D. Pyruvate, NADH and ATP
+E. Ribose 5-phosphate, NADPH and ADP
+Correct Answer: A. Acetyl CoA, NADH and FADH2
+Explanation: Beta oxidation cycles produce Acetyl CoA, NADH, and FADH2. CO2 is produced later in the TCA cycle, not beta oxidation.
+
+[SBAQ]
+Question: In which condition is an excessive deposition of extracellular matrix a contributing factor to pathogenesis?
+Options:
+A. Osteoarthritis
+B. Rheumatoid arthritis
+C. Alport Syndrome
+D. Idiopathic pulmonary fibrosis
+E. Muscular dystrophy
+Correct Answer: D. Idiopathic pulmonary fibrosis
+Explanation: Fibrosis is defined by the excessive deposition of connective tissue components (extracellular matrix) like collagen.
+
+[SBAQ]
+Question: Why are some amino acids described as glucogenic?
+Options:
+A. Their carbon skeletons can be used in gluconeogenesis
+B. They are precursors of glucocorticoid hormones
+C. They can be covalently linked to form glycogen
+D. They contain glucose
+E. They regulate levels of the hormone glucagon
+Correct Answer: A. Their carbon skeletons can be used in gluconeogenesis
+Explanation: Glucogenic amino acids can be converted into intermediates (like pyruvate or oxaloacetate) that feed into the gluconeogenesis pathway to produce glucose.
+
+[SBAQ]
+Question: A patient develops acute leukaemia of myeloid origin. Which of the following cells would you expect to find elevated in the blood?
+Options:
+A. Blast cells
+B. Macrophages
+C. Monocytes
+D. Lymphocytes
+E. Eosinophils
+Correct Answer: A. Blast cells
+Explanation: Acute leukaemias are characterized by the rapid proliferation of immature "blast" cells in the bone marrow and blood.
+
+[SBAQ]
+Question: Which cell type exists in an immature form in the periphery where they recognise pathogens, and then mature and become adapted for presenting antigen to T cells in lymph nodes?
+Options:
+A. B lymphocytes
+B. Dendritic cells
+C. Eosinophils
+D. Erythrocytes
+E. Plasma cells
+Correct Answer: B. Dendritic cells
+Explanation: Dendritic cells are the professional antigen-presenting cells that bridge innate and adaptive immunity by migrating to lymph nodes to prime T cells.
+
+[SBAQ]
+Question: Salbutamol is a short-acting beta-2 adrenergic receptor agonist used to treat asthma. By what mechanism does salbutamol induce beta-2 adrenergic receptor (B2-AR) signalling?
+Options:
+A. Salbutamol binding to B2-AR induces receptor clustering and activation of internal enzymes
+B. Salbutamol diffuses across the cell membrane and activates internal B2-AR receptors
+C. Salbutamol binding to B2-AR opens an ion channel allowing ions to cross the cell membrane
+D. Salbutamol binding to B2-AR activates an intracellular G protein
+E. Salbutamol binding to B2-AR induces the production of the transcription factor c-myc
+Correct Answer: D. Salbutamol binding to B2-AR activates an intracellular G protein
+Explanation: The Beta-2 adrenergic receptor is a G-Protein Coupled Receptor (GPCR). Agonist binding activates the associated G-protein (Gs).
+
+[SBAQ]
+Question: What type of plot is shown in the accompanying image? (Plot showing distribution with width representing number of individuals).
+Options:
+A. Box and Whiskers plot
+B. Dot plot
+C. Histogram
+D. Scatter plot
+E. Violin plot
+Correct Answer: E. Violin plot
+Explanation: A violin plot combines a box plot with a kernel density plot, showing the probability density of the data at different values (the "width").
+
+[SBAQ]
+Question: What is the main advantage of using a PCR-based technique as a diagnostic tool for viral infections?
+Options:
+A. It is easy to perform without specialised equipment
+B. It is very cost effective
+C. It will provide accurate information about when infection occurred
+D. It can be done direct from the specimen without the need for culture
+E. The antibiotic resistance profile of organisms can be determined easily
+Correct Answer: D. It can be done direct from the specimen without the need for culture
+Explanation: PCR amplifies DNA/RNA directly, removing the need for slow and difficult viral cultures.
+
+[SBAQ]
+Question: Considering all 5 sub-clones have evolved from a single cancer cell (as shown in the accompanying table), which of the proto-oncogenes is most likely to have acquired the first driver mutation?
+Options:
+A. Proto-oncogene A
+B. Proto-oncogene B
+C. Proto-oncogene C
+D. Proto-oncogene D
+E. Proto-oncogene E
+Correct Answer: C. Proto-oncogene C
+Explanation: The "trunk" or founder mutation must be present in every single sub-clone. In the table, the mutation in Proto-oncogene C is the only one present in all 5 clones.
+
+[SBAQ]
+Question: Cells and the organs they make up can adapt to injury. How is the cellular adaptation known as metaplasia best described?
+Options:
+A. A decrease in cell proliferation within the organ.
+B. A reversible change in which one adult cell type is replaced by another in the organ.
+C. An increase in the number of cells within the organ.
+D. An increase in the size of the cell (or organ).
+E. Shrinkage in the size of the cell (or organ) by the loss of cellular substances.
+Correct Answer: B. A reversible change in which one adult cell type is replaced by another in the organ.
+Explanation: Metaplasia is defined as the reversible replacement of one adult cell type (epithelial or mesenchymal) by another adult cell type.
+
+[SBAQ]
+Question: The presence of which leukocyte is characteristic of chronically inflamed tissues?
+Options:
+A. Basophil
+B. Eosinophil
+C. Lymphocyte
+D. Macrophage
+E. Neutrophil
+Correct Answer: D. Macrophage
+Explanation: While neutrophils characterize acute inflammation, macrophages and lymphocytes are the dominant cells in chronic inflammation.
+
+*** VSAQ EXAMPLES ***
+
+[VSAQ]
+Question: Consider the histological image of a cross section of the excretory duct of the pancreas. How are the epithelial cells best described?
+Accepted Answers: Columnar epithelium
+Explanation: The image shows cells that are taller than they are wide, with nuclei near the base, characteristic of simple columnar epithelium.
+
+[VSAQ]
+Question: Calculate the mean cell haemoglobin (MCH) to 1 decimal place using these values: Hb = 153 g/L, Hct = 0.54 L/L, RBC = 5.1 x 10^12/L.
+Accepted Answers: 30.0 pg
+Explanation: MCH = Hb / RBC. 153 / 5.1 = 30.0. The unit is picograms (pg).
+
+[VSAQ]
+Question: Five proteins were purified from plasma. Looking at Panel A (highest relative abundance) and Panel B/C, which of the proteins is most likely to be albumin?
+Accepted Answers: Protein 2
+Explanation: Albumin is the most abundant protein in plasma. Panel A shows Protein 2 as having the highest relative abundance (~50%+).
+
+[VSAQ]
+Question: What are the infections caused by fungi called?
+Accepted Answers: Mycoses
+Explanation: Mycosis (plural: Mycoses) is the medical term for a fungal infection.
+
+[VSAQ]
+Question: Through which specialised vessels do naive lymphocytes leave the circulation and migrate into secondary lymphoid tissue?
+Accepted Answers: High endothelial venule, HEV
+Explanation: High Endothelial Venules (HEVs) are specialized post-capillary venous swellings that allow lymphocytes to extravasate into the lymph node.
+
+[VSAQ]
+Question: Patient X has a high caloric intake but low weight. Based on the mitochondrial oxygen consumption graph (respiration continues despite Oligomycin), what can you conclude about their mitochondria?
+Accepted Answers: Uncoupled from ATP production
+Explanation: Oligomycin blocks ATP synthase. In normal mitochondria, this stops respiration. If respiration continues, electron transport is "uncoupled" from ATP synthesis (energy is lost as heat).
+
+[VSAQ]
+Question: Consider the diagram showing the formation and sequential activation of M-Cdk. What is the role of the protein Cdc25 in this process?
+Accepted Answers: Phosphatase, Removal of inhibitory phosphate
+Explanation: Cdc25 removes the inhibitory phosphate groups placed on Cdk1 by Wee1, thereby activating the M-Cdk complex.
+
+[VSAQ]
+Question: What cells undergo a process of positive and negative selection in the thymus?
+Accepted Answers: T lymphocytes, T cells
+Explanation: The thymus is the site of T cell maturation, where they are tested for MHC restriction (positive selection) and self-tolerance (negative selection).
+
+[VSAQ]
+Question: What leukocytes highlighted by the arrowheads are shown in the accompanying image of a blood film stained with Leishman's solution? (Kidney bean nucleus).
+Accepted Answers: Monocytes
+Explanation: The cells shown have a large, kidney-bean shaped nucleus and grey-blue cytoplasm, which are diagnostic features of monocytes.
+
+[VSAQ]
+Question: What is the mechanism of action of quinolone antibiotics (e.g. Moxifloxacin)?
+Accepted Answers: Inhibits bacterial DNA replication, Inhibits bacterial DNA synthesis
+Explanation: Quinolones target DNA gyrase and Topoisomerase IV, enzymes essential for bacterial DNA replication.
+
+[VSAQ]
+Question: What type of inheritance pattern is most likely for a disease caused by a mutation resulting in activation of a receptor encoded on chromosome 6?
+Accepted Answers: Autosomal dominant
+Explanation: "Gain of function" mutations (constitutive activation) usually manifest as Autosomal Dominant traits because one mutant copy is enough to drive the phenotype.
+
+[VSAQ]
+Question: The chemokine receptor type 5 (CCR5) plays a key role in HIV infection. What stage of the infection process is it involved in?
+Accepted Answers: Cell entry, Viral binding
+Explanation: CCR5 acts as a co-receptor (along with CD4) that allows the HIV virus to fuse with and enter the host T-cell.
+
+[VSAQ]
+Question: In what ABO blood group would you expect to see red cell agglutination (forming a clump) when tested with a known anti-B antibody reagent and no agglutination when tested with a known anti-A reagent?
+Accepted Answers: Group B
+Explanation: Agglutination with Anti-B indicates the presence of B antigens. Lack of agglutination with Anti-A indicates the absence of A antigens. This defines Blood Group B.
+
+[VSAQ]
+Question: A phosphate buffered saline solution has: 137 mM NaCl, 2.7 mM KCl, 10 mM Na2HPO4, 1.8 mM KH2PO4. What is the osmolarity of the solution in milli osmoles per litre (mOsm/L)?
+Accepted Answers: 313.0 mOsm/L, 313 mOsm/L
+Explanation: Sum of all ions: (137*2) + (2.7*2) + (10*3) + (1.8*2) = 274 + 5.4 + 30 + 3.6 = 313.
+
+[VSAQ]
+Question: The kinetics of an enzyme-catalysed reaction resulted in a Lineweaver-Burk plot with a y-intercept of 0.02. Calculate the maximal velocity (Vmax) in µmol/mL/minute.
+Accepted Answers: 50, 50 µmol/mL/minute
+Explanation: In a Lineweaver-Burk plot, the y-intercept = 1/Vmax. Therefore, Vmax = 1 / 0.02 = 50.
+
+*** SAQ EXAMPLES ***
+
+[SAQ]
+Intro: Statins such as lovastatin act by competitively binding to the catalytic domain of 3-hydroxy-3-methylglutaryl coenzyme A reductase (HMG-CoA reductase, HMGCR).
+Parts:
+1. (2 marks) Why are statins useful medications for the treatment of hypercholesterolaemia and why is HMGCR an ideal target for such drugs?
+   Model Answer: HMG-CoA reductase catalyses the rate-limiting step of cholesterol biosynthesis. Reduction in HMG-CoA activity therefore results in reduced cholesterol levels.
+2. (2 marks) The accompanying graphs present data sets showing that experimental treatment of mice with lovastatin results in an increase in HMGCR in liver at the protein and mRNA levels. Suggest how the liver responds to treatment with lovastatin. How do you think this might alter the usefulness of statins following prolonged treatment?
+   Model Answer: The liver appears to compensate for reduced HMGCR function by increasing production of HMGCR at RNA and protein levels. The usefulness of statins in treating therefore be reduced if treatment is prolonged.
+3. (3 marks) Compound 81 is a novel, small molecule discovered to enhance the rate of degradation of HMGCR. Describe the effects of compound 81 and lovastatin on the formation of atherosclerotic lesions based on the data.
+   Model Answer: Compound 81 alone significantly reduces lesion area. The effectiveness of compound 81 in reducing lesion area is equivalent to lovastatin. The combination of compound 81 and lovastatin is significantly more effective than either single treatment.
+4. (3 marks) The cholesterol metabolite 7-dehydrocholesterol is an intermediate in the synthesis of the active vitamin D metabolite known as calcitriol. Suggest why the increased use of sunscreen might be related to low levels of calcitriol in apparently healthy young adults.
+   Model Answer: Calcitriol acts as a steroid hormone to induce key genes involved in bone metabolism. A key stage in the metabolism of 7-dehydrocholesterol to calcitriol is the action of UV light. Sunscreens block UV light and hence the production of calcitriol.
+
+[SAQ]
+Intro: A mature T-cell responds to the chemokines CCL22 and CCL17 by leaving the circulation and entering inflamed skin where it may encounter antigen.
+Parts:
+1. (3 marks) Name the class of molecules denoted by the letters A and B and the cellular process denoted by the letter C.
+   Model Answer: A is Selectin. B is Integrin. Process is transcytosis a.k.a. diapedesis or transmigration.
+2. (1 mark) A synthetic CCL22 protein was produced in bacteria and quantified using a spectrophotometer at 280 nm. Give one feature of the CCL22 protein that may contribute to its absorbance at this wavelength.
+   Model Answer: Tyrosine residues OR Tryptophan residues OR Phenylalanine residues OR Disulphide-bonds.
+3. (3 marks) Absorption was found to be 24.5 units in a 1 cm cuvette. State the Beer-Lambert law and use it to calculate the concentration of the spike protein in the buffer in micromoles per litre. Coeff is 136,390 M-1 cm-1.
+   Model Answer: A = e * c * l (Beer-Lambert Law). C = 24.5 / 136390 = 0.000180 M. C = 180 uM (units required).
+4. (3 marks) Describe three mechanisms that bacteria use to evade the effects of antibodies.
+   Model Answer: Capsule to hide antigens. Surface proteins (eg. Spa) that bind the Fc region and disrupt function. Secreted proteins (eg. SSL10) that bind the Fc region and prevent detection OR Express bacterial proteases that cleave immunoglobulin.

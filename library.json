@@ -1,0 +1,497 @@
+{
+  "PoM": {
+    "Molecular Biology of the Cell": [
+      {
+        "name": "2.1 Cell Metabolism 1",
+        "files": ["lectures/PoM/Molecular biology of the cell/Cell Metabolism 1 - 2025 for upload.pdf"]
+      },
+      {
+        "name": "2.2 Cell Metabolism 2",
+        "files": ["lectures/PoM/Molecular biology of the cell/Cell metabolism 2 - 2025 for upload.pdf"]
+      },
+      {
+        "name": "2.3 Epithelial cells and tissues",
+        "files": ["lectures/PoM/Molecular biology of the cell/Epithelial cells for upload 2025.pdf"]
+      },
+      {
+        "name": "2.4 Creatine Kinase",
+        "files": ["lectures/PoM/Molecular biology of the cell/Creatine kinase for upload.pdf"]
+      },
+      {
+        "name": "2.5 Cholesterol",
+        "files": ["lectures/PoM/Molecular biology of the cell/Cholesterol for upload 2025.pdf"]
+      },
+      {
+        "name": "2.6 Integration of Metabolism",
+        "files": ["lectures/PoM/Molecular biology of the cell/Integration of metabolism for upload.pdf"]
+      },
+      {
+        "name": "2.7 Cell Integrity",
+        "files": ["lectures/PoM/Molecular biology of the cell/Cell Integrity.pdf"]
+      },
+      {
+        "name": "2.8 Cell Replication",
+        "files": ["lectures/PoM/Molecular biology of the cell/Cell replication 2025 for upload.pdf"]
+      },
+      {
+        "name": "2.9 Cell Signalling",
+        "files": ["lectures/PoM/Molecular biology of the cell/Cell Signalling (25-26).pdf"]
+      },
+      {
+        "name": "2.10 Extracellular Matrix",
+        "files": ["lectures/PoM/Molecular biology of the cell/ECM for upload 2025.pdf"]
+      },
+      {
+        "name": "2.11 Cell Injury and Fate",
+        "files": ["lectures/PoM/Molecular biology of the cell/PoM Cell injury and fate for upload 2025.pdf"]
+      },
+      {
+        "name": "2.12 Fluid Compartments and Solutes",
+        "files": ["lectures/PoM/Molecular biology of the cell/Fluid compartments for upload.pdf"]
+      },
+      {
+        "name": "2.13 Inflammation",
+        "files": ["lectures/PoM/Molecular biology of the cell/Inflammation 2025 for upload.pdf"]
+      },
+      {
+        "name": "2.14 Enzyme Kinetics",
+        "files": ["lectures/PoM/Molecular biology of the cell/PoM Enzyme Kinetics 2025 for upload.pdf"]
+      },
+      {
+        "name": "2.15 Cancer",
+        "files": ["lectures/PoM/Molecular biology of the cell/2025 Cancer for upload.pdf"]
+      },
+      {
+        "name": "2.16 Histopathology",
+        "files": ["lectures/PoM/Molecular biology of the cell/Histopathology for upload.pdf"]
+      }
+    ],
+    "Haematology": [
+      {
+        "name": "3.1 Plasma",
+        "files": ["lectures/PoM/Haematology/Plasma for upload 2025.pdf"]
+      },
+      {
+        "name": "3.2 Red Blood Cells",
+        "files": [
+            "lectures/PoM/Haematology/Red cells lecture 2025.pdf",
+              "lectures/PoM/Haematology/Red cells handouts Oct 2025pptx.pdf"
+        ]
+      },
+      {
+        "name": "3.3 Haemoglobin spectrophotometry and electrophoresis",
+        "files": ["lectures/PoM/Haematology/Haemoglobin spectrophotometry and electrophoresis.pdf"]
+      },
+      {
+        "name": "3.4 Red Blood Cell Parameters",
+        "files": [
+            "lectures/PoM/Haematology/POM_RBC_parameters_2025_final_slides_LV 1.pdf"
+        ]
+      },
+      {
+        "name": "3.5 Red Blood Cell Abnormalities",
+        "files": ["lectures/PoM/Haematology/Red cells Tutorials 2025.pdf",
+            "lectures/PoM/Haematology/RBC tutorial-answers 2025.pdf"]
+      },
+      {
+        "name": "3.6 White Blood Cells",
+        "files": [
+            "lectures/PoM/Haematology/White cells lecture 2025.pdf"
+        ]
+      },
+      {
+        "name": "3.7 Diagnostic Role of Blood film",
+        "files": ["lectures/PoM/Haematology/Diagnostic Role of Blood Film.pdf"]
+      },
+      {
+        "name": "3.8 White Blood Cell Abnormalities",
+        "files": ["lectures/PoM/Haematology/White cells Tutorials 2025.pdf",
+      "lectures/PoM/Haematology/WBCTutorial_AnswersOct2025.pdf"
+        ]
+      },
+      {
+        "name": "3.9 Haemostasis",
+        "files": [
+            "lectures/PoM/Haematology/HaemostasisVideo1_Parts 1 & 2.pdf",
+            "lectures/PoM/Haematology/HaemostasisVideo2_ Part 3.pdf",
+            "lectures/PoM/Haematology/HaemostasisVideo3_ Parts 4 & 5.pdf"
+        ]
+      },
+      {
+        "name": "3.10 Blood Transfusion",
+        "files": [
+            "lectures/PoM/Haematology/Part 1 - Blood groups and their clinical significance SLIDES.pdf",
+            "lectures/PoM/Haematology/Part 2 - ABO and RH blood group systems SLIDES.pdf",
+            "lectures/PoM/Haematology/Part 3 - Pre-transfusion compatibility testing SLIDES.pdf",
+            "lectures/PoM/Haematology/Part 4 - Blood donor selection and testing SLIDES.pdf"
+        ]
+      }
+    ],
+    "Immunology & Infection": [
+      {
+        "name": "4.1 Microbial Infection",
+        "files": ["lectures/PoM/Immunity and Infection/4.1 Microbial Infection 06Oct25 ins.pdf"]
+      },
+      {
+        "name": "4.2 Lymphoid Tissues",
+        "files": ["lectures/PoM/Immunity and Infection/4.2 Lecture Lymphoid Tissue students.pdf"]
+      },
+      {
+        "name": "4.3 Antimicrobial therapies",
+        "files": ["lectures/PoM/Immunity and Infection/4.3 PoM II AMR and HAI 2025.pdf"]
+      },
+      {
+        "name": "4.4 Diagnostic Bacteriology",
+        "files": ["lectures/PoM/Immunity and Infection/Diagnostic Bacteriology.pdf"]
+      },
+      {
+        "name": "4.5 Lymphocytes",
+        "files": ["lectures/PoM/Immunity and Infection/4.6 Lymphocytes 2025.pdf"]
+      },
+      {
+        "name": "4.6 Immune Tolerance",
+        "files": ["lectures/PoM/Immunity and Infection/4_7 Immune Tolerance 2025.pdf"]
+      },
+      {
+        "name": "4.7 Immune Evasion",
+        "files": ["lectures/PoM/Immunity and Infection/PoM_4-8_Immune Evasion_2025.pdf"]
+      },
+      {
+        "name": "4.8 Anaphylaxis",
+        "files": ["lectures/PoM/Immunity and Infection/Anaphlyaxis 2025.pdf"]
+      },
+      {
+        "name": "4.9 Anti-viral agents",
+        "files": [
+            "lectures/PoM/Immunity and Infection/4.9 Antivirals TBL prep1.pdf",
+            "lectures/PoM/Immunity and Infection/4.9 Antivirals TBL prep2.pdf"
+        ]
+      },
+      {
+        "name": "4.10 Diagnostic Virology",
+        "files": ["lectures/PoM/Immunity and Infection/Diagnostic Virology.pdf"]
+      },
+      {
+        "name": "4.11 Vaccination",
+        "files": ["lectures/PoM/Immunity and Infection/Vaccines 2025.pdf"]
+      },
+      {
+        "name": "4.12 Immune Response to Infection",
+        "files": ["lectures/PoM/Immunity and Infection/Sequence and timing.pdf"]
+      },
+      {
+        "name": "4.13 Hypersensitivity",
+        "files": ["lectures/PoM/Immunity and Infection/Hypersensitivity 2025new2.pdf"]
+      }
+    ],
+    "Genetics": [
+      {
+        "name": "5.1 Modes of Inheritance",
+        "files": ["lectures/PoM/Genetics/pom modes1.pdf"]
+      },
+      {
+        "name": "5.2 Cancer Genetics",
+        "files": ["lectures/PoM/Genetics/Cancer Genetics - Dr Deepak Barnabas.pdf",
+          "lectures/PoM/Genetics/Cancer Genetics.pdf"
+          ]
+      },
+      {
+        "name": "5.3 Chromosomal Abnormalities",
+        "files": ["lectures/PoM/Genetics/Gen Chromosomal abnormalities.pdf"]
+      },
+      {
+        "name": "5.4 Complex Disease & Pharmacogenetics",
+        "files": ["lectures/PoM/Genetics/CJ pharmacogenomics complex disease 5.11.25.pdf"]
+      },
+      {
+        "name": "5.5 Brittle Bones",
+        "files": ["lectures/PoM/Genetics/Brittle bones.pdf"]
+      },
+      {
+        "name": "5.6 Pedigrees and Risk",
+        "files": [
+            "lectures/PoM/Genetics/PoM pedigreesanswers.pdf",
+            "lectures/PoM/Genetics/PoM pedigreesinsendi.pdf"
+        ]
+      },
+      {
+        "name": "5.7 Genetic Testing",
+        "files": ["lectures/PoM/Genetics/Prenatal Testing Imperial_ACol.pdf"]
+      },
+      {
+        "name": "5.8 Phenotypic Variability",
+        "files": ["lectures/PoM/Genetics/Phenotypic Variability.pdf"]
+      },
+      {
+        "name": "5.9 Emerging Treatments",
+        "files": ["lectures/PoM/Genetics/PoM treatments.pdf"]
+      }
+    ]
+  },
+  "BRS": {
+    "Neurology & Neuroscience": [
+      {
+        "name": "2.1 Welcome to Neurology & Neuroscience",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_Intro to Neurology & Neuroscience.pdf"]
+      },
+      {
+        "name": "2.2 Cells of the NS and NMJ",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Cells of the nervous system (2025-26).pdf"]
+      },
+      {
+        "name": "2.3 Membrane potential and action potentials",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_Membrane_potentials_and_action_potentials.pdf"]
+      },
+      {
+        "name": "2.4 Pharmacology of the nervous system",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_Pharmacology_of_the_nervous_system (1).pdf"]
+      },
+      {
+        "name": "2.5 Neurotransmission and pharmacology",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_Neurotransmission (1).pdf"]
+      },
+      {
+        "name": "2.6 Neuroanatomy",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_Neuroanatomy.pdf"]
+      },
+      {
+        "name": "2.7 Epilepsy",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_Epilepsy_tutorial_answers.pdf"]
+      },
+      {
+        "name": "2.8 Autonomic nervous system",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_Autonomic_nervous_system.pdf"]
+      },
+      {
+        "name": "2.9 The central nervous system",
+        "files": [
+            "lectures/BRS/Neurology & Neuroscience/Neuro_1a_Central_Nervous_System (1).pdf"
+        ]
+      },
+      {
+        "name": "2.10 The peripheral nervous system",
+        "files": [
+            "lectures/BRS/Neurology & Neuroscience/Neuro_1a_Peripheral_Nervous_System.pdf"
+        ]
+      },
+      {
+        "name": "2.11 Disorders of the CNS",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_CNS_tutorial_answers.pdf"]
+      },
+      {
+        "name": "2.12 Disorders of the PNS",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_PNS_tutorial_answers.pdf"]
+      },
+      {
+        "name": "2.13 Brainstem and Cranial nerves",
+        "files": [
+            "lectures/BRS/Neurology & Neuroscience/Neuro_1a_Brainstem_Cranial_Nerves.pdf"
+        ]
+      },
+      {
+        "name": "2.14 Neurological disorders",
+        "files": ["lectures/BRS/Neurology & Neuroscience/Neuro_1a_Neurological_disorders_tutorial_answers.pdf"]
+      }
+    ],
+    "Psychiatry": [
+      {
+        "name": "3.1 Introduction to psychiatry: Obsessions and Anxiety",
+        "files": [
+            "lectures/BRS/Psychiatry/1a Intro to Psychiatry.pdf",
+            "lectures/BRS/Psychiatry/An Introduction to Psychiatry.pdf"
+        ]
+      },
+      {
+        "name": "3.2 Intro to Psych: Depression and Schizophrenia",
+        "files": ["lectures/BRS/Psychiatry/1a Introduction to Psychiatry II Slides.pdf"]
+      },
+      {
+        "name": "3.3 Intro to Psych: Anxiety, depression & self-harm, psychosis, addiction, OCD, Eating disorders OVERVIEW",
+        "files": ["lectures/BRS/Psychiatry/1a Psychosis Lecture 2025 (1).pdf"]
+      }
+    ],
+    "Endocrinology": [
+      {
+        "name": "4.1 The Pituitary Gland 1",
+        "files": ["lectures/BRS/Endocrinology/Endo_LE01_The pituitary gland_2026.pdf"]
+      },
+      {
+        "name": "4.2 The Pituitary Gland 2",
+        "files": []
+      },
+      {
+        "name": "4.3 The Thyroid Gland",
+        "files": ["lectures/BRS/Endocrinology/Final_Endo_LE02_Thyroid_2026.pdf"]
+      },
+      {
+        "name": "4.4 The Adrenal Gland",
+        "files": ["lectures/BRS/Endocrinology/Endo_LE05_The_adrenal_gland_final_LV2026.pdf"]
+      },
+      {
+        "name": "4.5 Disorders of Thyroid & Adrenal Gland",
+        "files": []
+      },
+      {
+        "name": "4.6 Regulation of Calcium & Phosphate",
+        "files": ["lectures/BRS/Endocrinology/Endo_LE07_Regulation_of_calcium_and_phosphate 2026.pdf"]
+      },
+      {
+        "name": "4.7 Glucose Homeostasis",
+        "files": ["lectures/BRS/Endocrinology/Final_Endo_LE08_Glucose_homeostasis_NMM 2026.pdf"]
+      },
+      {
+        "name": "4.8 Introduction to Diabetes Mellitus 1",
+        "files": ["lectures/BRS/Endocrinology/2026 Y1 Endo Intro to Diabetes Reddy.pdf"]
+      },
+      {
+        "name": "4.9 Introduction to Diabetes Mellitus 2",
+        "files": []
+      },
+      {
+        "name": "4.10 The Reproductive System 1",
+        "files": ["lectures/BRS/Endocrinology/2026 Y1 Endo Repro Part 1 of 3 Comninos.pdf"]
+      },
+      {
+        "name": "4.11 The Reproductive System 2",
+        "files": ["lectures/BRS/Endocrinology/2026 Y1 Endo Repro Part 2 of 3 Comninos.pdf"]
+      },
+      {
+        "name": "4.12 The Reproductive System 3",
+        "files": []
+      },
+      {
+        "name": "4.13 Sex hormones 1",
+        "files": []
+      },
+      {
+        "name": "4.14 Sex hormones 2",
+        "files": []
+      }
+    ],
+    "Musculoskeletal & Rheumatology": [
+      {
+        "name": "5.1 Introduction to Musculoskeletal System",
+        "files": ["lectures/BRS/Musculoskeletal & Rheumatology/S01-Intro-MSK-26 (2).pdf"]
+      },
+      {
+        "name": "5.2 Cartilage biology and osteoarthritis",
+        "files": ["lectures/BRS/Musculoskeletal & Rheumatology/Cartilage and Osteoarthritis_Imperial_Jan 2026_Watt_Final.pdf"]
+      },
+      {
+        "name": "5.3 Muscle microstructure and contraction",
+        "files": ["lectures/BRS/Musculoskeletal & Rheumatology/MSk_LE02_Muscle_microstructure_and_contraction 25-26.pdf"]
+      },
+      {
+        "name": "5.4 Injury & Healing 1",
+        "files": ["lectures/BRS/Musculoskeletal & Rheumatology/BRS1 MSK Injury and Healing Part 1-rima-Jan2026-final.pdf"]
+      },
+      {
+        "name": "5.5 Injury & Healing 2",
+        "files": []
+      },
+      {
+        "name": "5.6 Musculoskeletal Emergency presentations",
+        "files": []
+      },
+      {
+        "name": "5.7 Introduction to Rheumatology 1",
+        "files": []
+      },
+      {
+        "name": "5.8 Introduction to Rheumatology 2",
+        "files": []
+      }
+    ],
+    "Dermatology": [
+      {
+        "name": "9.1 Introduction to Dermatology",
+        "files": ["lectures/BRS/Dermatology/Introduction to dermatology- Basic science_2026.pdf"]
+      },
+      {
+        "name": "9.2 Common Inflammatory Dermatoses: Psoriasis and Eczema",
+        "files": ["lectures/BRS/Dermatology/2026 Y1 Lecture 2 - Common Inflammatory Dermatoses - Psoriasis and Eczema 2.pdf"]
+      },
+      {
+        "name": "9.3 Basic Science & Inflammatory Dermatoses",
+        "files": ["lectures/BRS/Dermatology/Debrief_Basic Science and Common Inflammatory Dermatoses Tutorial.pdf"]
+      }
+    ],
+    "Cardiovascular and Respiratory": [
+      {
+        "name": "6.2 Introduction to the heart",
+        "files": ["lectures/BRS/Cardiovascular and Respiratory/CVR1a - Introduction to the heart 2025-2026 - Q&A.pdf"]
+      },
+      {
+        "name": "6.3 Cardiovascular Mechanics",
+        "files": ["lectures/BRS/Cardiovascular and Respiratory/Cardiac mechanics_AD_Jan2025 wo answers.pdf"]
+      },
+      {
+        "name": "6.4 Structure & Function of the Airways",
+        "files": ["lectures/BRS/Cardiovascular and Respiratory/Cardioresp - Struct + funct airways - Jan 2026.pdf"]
+      },
+      {
+        "name": "6.5 The Cardiac Cycle",
+        "files": ["lectures/BRS/Cardiovascular and Respiratory/Cardiac_cycle_AD_Jan2025.pdf"]
+      },
+      {
+        "name": "6.6 Microcirculation",
+        "files": []
+      },
+      {
+        "name": "6.7 Blood Pressure Measurements",
+        "files": []
+      },
+      {
+        "name": "6.8 Ventilation & Gas Exchange",
+        "files": []
+      },
+      {
+        "name": "6.9 Exercise capacity",
+        "files": []
+      },
+      {
+        "name": "6.10 Cardiorespiratory mechanics",
+        "files": []
+      },
+      {
+        "name": "6.11 Cardiology clinic puzzle room",
+        "files": []
+      },
+      {
+        "name": "6.12 Pulmonary function tests (analysis)",
+        "files": []
+      },
+      {
+        "name": "6.14 Control of heart function",
+        "files": ["lectures/BRS/Cardiovascular and Respiratory/Control of heart function (1).pdf"]
+      },
+      {
+        "name": "6.15 Cardiovascular Disorders 1",
+        "files": []
+      },
+      {
+        "name": "6.16 Control of Lung function",
+        "files": []
+      },
+      {
+        "name": "6.17 ECG analysis",
+        "files": []
+      },
+      {
+        "name": "6.18 Stabbed to stable",
+        "files": []
+      },
+      {
+        "name": "6.19 COPD - clinical trial",
+        "files": []
+      },
+      {
+        "name": "6.20 Cardiovascular Disorders 3",
+        "files": []
+      }
+    ],
+    "Gastroenterology": [],
+    "Urology & Renal Medicine": [],
+    "Development and Aging": []
+  }
+}
