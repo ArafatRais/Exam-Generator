@@ -672,16 +672,54 @@
                     saqJsonTemplate = `,{ "type":"SAQ", "tag":"...", "intro":"...", "parts": [ {"id":1, "question":"...", "marks":2, "model_answer":["Point 1", "Point 2"]}, {"id":2, "question":"...", "marks":3, "model_answer":["..."]} ] }`;
                 }
 
-                const prompt = `You are an Imperial College London medical examiner. Create exam questions based on content. 
-                CRITICAL: ONLY use provided text/images. DO NOT use outside knowledge. Assign strictly one tag from: ${JSON.stringify(currentTags)}. 
+                const prompt = `
+                You are an Imperial College London medical examiner. Create exam questions based on content.
                 
+                CRITICAL - STRICT SCOPE CONTAINMENT: 
+                - You must ONLY generate questions based on the specific text and images provided in the 'user' parts of this prompt.
+                - DO NOT use your outside medical knowledge to create questions about topics not present in the files.
+                - If the files do not mention a specific disease, protein, or pathway, DO NOT ask about it.
+
                 *** CRITICAL - NO VISUAL REFERENCES ***
-                - The user interface is TEXT ONLY.
-                - DO NOT generate questions that require looking at a diagram, graph, or image.
-                - All necessary information must be in the text stem.
+                - The user interface is TEXT ONLY. The student CANNOT see the original slides or images.
+                - DO NOT generate questions that require looking at a diagram, graph, or image (e.g. "What does label A point to?", "Interpret this graph").
+                - DO NOT use phrases like "In the accompanying diagram", "As shown in the figure", or "Look at the table below".
+                - All necessary information to answer the question MUST be written in the text of the question stem.
 
-                DISTRACTORS: Must be plausible. EXPLANATION: Use HTML. SAQ: 1 model_answer item per mark. ${modeInstruction} TYPES: 1. SBAQ: 5 options (A-E). 2. VSAQ: 1-4 words answer. ${saqInstruction} JSON FORMAT: [ {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"..."}, {"type":"VSAQ", "tag":"...", "question":"...", "acceptedAnswers":["..."], "explanation":"..."} ${saqJsonTemplate} ]`;
+                REQUIRED: ${sbaqN} SBAQs, ${vsaqN} VSAQs${saqN > 0 ? `, ${saqN} SAQs` : ''}.
+                
+                IMPORTANT TAGGING: Assign strictly one of these tags to the "tag" field based on the content: 
+                ${JSON.stringify(currentTags)}
+                
+                CRITICAL RULES FOR QUALITY CONTROL:
+                1. DISTRACTORS: Must be of the SAME CATEGORY and DATA TYPE as the correct answer. (e.g. if the answer is a time '20 mins', distractors must be other times '10 mins', '1 hour'. Do NOT use random words).
+                2. META-LANGUAGE BAN: NEVER use phrases like "According to the text", "The notes mention". Write as if you are a standard external exam board.
+                3. DIFFICULTY: Options must be homogeneous in tone. Avoid "positive" vs "negative" outliers.
+                4. EXPLANATION FORMAT: Use HTML tags (<br>, <b>) for formatting. Structure: "<b>Correct:</b> [Reason]. <br><br><b>Why others are wrong:</b>..."
+                
+                ${modeInstruction}
 
+                TYPES:
+                1. SBAQ: Must include 5 options (A-E). "correctAnswer" MUST be the EXACT option text string.
+                2. VSAQ: 1-4 words max answer.
+                ${saqInstruction}
+
+                *** STRICT SAQ MARKING RULE ***
+                You MUST enforce a 1-to-1 ratio between 'marks' and 'model_answer' items:
+                - If "marks": 2, the "model_answer" array MUST contain exactly 2 separate strings.
+                - If "marks": 4, the "model_answer" array MUST contain exactly 4 separate strings.
+                - DO NOT combine multiple points into one string. Split them up so the user gets one checkbox per mark.
+                - WRONG: "marks": 2, "model_answer": ["Cell membrane and Nucleus"] (This is only 1 item).
+                - CORRECT: "marks": 2, "model_answer": ["Cell membrane", "Nucleus"] (This is 2 items).
+
+                JSON FORMAT ONLY:
+                [
+                  {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"..."},
+                  {"type":"VSAQ", "tag":"...", "question":"...", "acceptedAnswers":["..."], "explanation":"..."}
+                  ${saqJsonTemplate}
+                ]`;
+
+                // 3. Send to API
                 const finalParts = [{text: prompt}];
                 if(trainDataCache) finalParts.push({text: "TRAINING EXAMPLES:\n" + trainDataCache});
                 finalParts.push(...parts);
