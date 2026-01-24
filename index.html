@@ -231,9 +231,8 @@
             <div class="form-group">
                 <label>Select Brain</label>
                 <select id="model-select">
-                    <option value="gemini-3-flash-preview" selected>Gemini 3 Flash</option>
                     <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                    <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+                    <option value="gemini-2.5-flash-lite" selected>Gemini 2.5 Flash Lite</option>
                 </select>
             </div>
 
@@ -570,7 +569,7 @@
     let timerInterval;
     let isSubmitted = false;
 
-   async function generateExam() {
+    async function generateExam() {
         const loading = document.getElementById('loading');
         loading.classList.remove('hidden');
         document.getElementById('gen-btn').disabled = true;
@@ -588,7 +587,6 @@
 
             isSubmitted = false;
 
-            // 1. Prepare Review Questions (SRS)
             let reviewQuestions = [];
             if (mixErrors) {
                 const errors = getErrors();
@@ -596,18 +594,14 @@
                     const totalReq = sbaqN + vsaqN + saqN;
                     const reviewCount = Math.min(errors.length, Math.ceil(totalReq * 0.3)); 
                     errors.sort((a,b) => (b.repCount || 1) - (a.repCount || 1));
-                    // RESET ANSWER to prevent "pre-filled" wrong answers
-                    reviewQuestions = errors.slice(0, reviewCount).map(q => ({...q, isReview: true, activeUserAnswer: null}));
-                }
+                    reviewQuestions = errors.slice(0, reviewCount).map(q => ({...q, isReview: true, activeUserAnswer: null}));                }
             }
 
-            // 2. Prepare New Questions
             let newQuestions = [];
             if (sbaqN + vsaqN + saqN > 0) {
                 let parts = [];
                 let hasContent = false;
 
-                // --- GATHER CONTENT ---
                 if (sourceMode === 'upload') {
                     const input = document.getElementById('file-input');
                     const notes = document.getElementById('notes-input').value;
@@ -653,15 +647,6 @@
 
                 if(!hasContent) throw new Error("Please upload files or select lectures from the library.");
 
-                // --- SANITIZE TEXT (Fix for "Genitalia" triggers in text) ---
-                parts.forEach(p => {
-                    if(p.text) {
-                        p.text = p.text.replace(/Genitalia/gi, "Reproductive Organs")
-                                       .replace(/Genitals/gi, "Reproductive Organs");
-                    }
-                });
-
-                // --- BUILD PROMPT ---
                 let modeInstruction = "FOCUS: 100% Direct Recall questions (Definitions, Facts).";
                 if(appMode) modeInstruction = "FOCUS: 50% Direct Recall and 50% Application/Vignette style questions.";
 
@@ -672,55 +657,90 @@
                     saqJsonTemplate = `,{ "type":"SAQ", "tag":"...", "intro":"...", "parts": [ {"id":1, "question":"...", "marks":2, "model_answer":["Point 1", "Point 2"]}, {"id":2, "question":"...", "marks":3, "model_answer":["..."]} ] }`;
                 }
 
-                const prompt = `You are an Imperial College London medical examiner. Create exam questions based on content. 
-                CRITICAL: ONLY use provided text/images. DO NOT use outside knowledge. Assign strictly one tag from: ${JSON.stringify(currentTags)}. 
+                const prompt = `
+                You are an Imperial College London medical examiner. Create exam questions based on content.
                 
+                CRITICAL - STRICT SCOPE CONTAINMENT: 
+                - You must ONLY generate questions based on the specific text and images provided in the 'user' parts of this prompt.
+                - DO NOT use your outside medical knowledge to create questions about topics not present in the files.
+                - If the files do not mention a specific disease, protein, or pathway, DO NOT ask about it.
+
                 *** CRITICAL - NO VISUAL REFERENCES ***
-                - The user interface is TEXT ONLY.
-                - DO NOT generate questions that require looking at a diagram, graph, or image.
-                - All necessary information must be in the text stem.
+                - The user interface is TEXT ONLY. The student CANNOT see the original slides or images.
+                - DO NOT generate questions that require looking at a diagram, graph, or image (e.g. "What does label A point to?", "Interpret this graph").
+                - DO NOT use phrases like "In the accompanying diagram", "As shown in the figure", or "Look at the table below".
+                - All necessary information to answer the question MUST be written in the text of the question stem.
 
-                DISTRACTORS: Must be plausible. EXPLANATION: Use HTML. SAQ: 1 model_answer item per mark. ${modeInstruction} TYPES: 1. SBAQ: 5 options (A-E). 2. VSAQ: 1-4 words answer. ${saqInstruction} JSON FORMAT: [ {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"..."}, {"type":"VSAQ", "tag":"...", "question":"...", "acceptedAnswers":["..."], "explanation":"..."} ${saqJsonTemplate} ]`;
+                REQUIRED: ${sbaqN} SBAQs, ${vsaqN} VSAQs${saqN > 0 ? `, ${saqN} SAQs` : ''}.
+                
+                IMPORTANT TAGGING: Assign strictly one of these tags to the "tag" field based on the content: 
+                ${JSON.stringify(currentTags)}
+                
+                CRITICAL RULES FOR QUALITY CONTROL:
+                1. DISTRACTORS: Must be of the SAME CATEGORY and DATA TYPE as the correct answer. (e.g. if the answer is a time '20 mins', distractors must be other times '10 mins', '1 hour'. Do NOT use random words).
+                2. META-LANGUAGE BAN: NEVER use phrases like "According to the text", "The notes mention". Write as if you are a standard external exam board.
+                3. DIFFICULTY: Options must be homogeneous in tone. Avoid "positive" vs "negative" outliers.
+                4. EXPLANATION FORMAT: Use HTML tags (<br>, <b>) for formatting. Structure: "<b>Correct:</b> [Reason]. <br><br><b>Why others are wrong:</b>..."
+                
+                ${modeInstruction}
 
+                TYPES:
+                1. SBAQ: Must include 5 options (A-E). "correctAnswer" MUST be the EXACT option text string.
+                2. VSAQ: 1-4 words max answer.
+                ${saqInstruction}
+
+                *** STRICT SAQ MARKING RULE ***
+                You MUST enforce a 1-to-1 ratio between 'marks' and 'model_answer' items:
+                - If "marks": 2, the "model_answer" array MUST contain exactly 2 separate strings.
+                - If "marks": 4, the "model_answer" array MUST contain exactly 4 separate strings.
+                - DO NOT combine multiple points into one string. Split them up so the user gets one checkbox per mark.
+                - WRONG: "marks": 2, "model_answer": ["Cell membrane and Nucleus"] (This is only 1 item).
+                - CORRECT: "marks": 2, "model_answer": ["Cell membrane", "Nucleus"] (This is 2 items).
+
+                JSON FORMAT ONLY:
+                [
+                  {"type":"SBAQ", "tag":"...", "question":"...", "options":["A...","B...","C...","D...","E..."], "correctAnswer":"...", "explanation":"..."},
+                  {"type":"VSAQ", "tag":"...", "question":"...", "acceptedAnswers":["..."], "explanation":"..."}
+                  ${saqJsonTemplate}
+                ]`;
+
+                // 3. Send to API
                 const finalParts = [{text: prompt}];
                 if(trainDataCache) finalParts.push({text: "TRAINING EXAMPLES:\n" + trainDataCache});
                 finalParts.push(...parts);
 
+                // ... inside generateExam function ...
+
                 const model = document.getElementById('model-select').value;
                 
-                // --- API CALL FUNCTION (With Retry Logic) ---
-                async function callApi(contentParts) {
-                    return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ 
-                            contents: [{ parts: contentParts }],
-                            
-                        })
-                    });
-                }
+                // UPDATED FETCH CALL WITH SAFETY SETTINGS
+                const apiResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ 
+                        contents: [{ parts: finalParts }],
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
+                    })
+                });
+                
+                const apiData = await apiResp.json();
 
-                // Attempt 1: Full Content (Images + Text)
-                let apiResp = await callApi(finalParts);
-                let apiData = await apiResp.json();
-
-                // --- AUTO-RETRY IF BLOCKED (The Fix for "Safety Block" Image issues) ---
+                // ... (rest of the error handling code I gave you previously) ...
+                // FIX FOR ERROR #2 (Reading '0')
+                if(apiData.error) throw new Error(apiData.error.message);
                 if(!apiData.candidates || apiData.candidates.length === 0) {
-                    console.warn("Attempt 1 blocked. Retrying with text only...");
-                    
-                    // Filter out images, keep only text
-                    const textOnlyParts = finalParts.filter(p => p.text);
-                    apiResp = await callApi(textOnlyParts);
-                    apiData = await apiResp.json();
-                    
-                    if(!apiData.candidates || apiData.candidates.length === 0) {
-                         throw new Error("AI Safety Block persisted even in text-only mode. Try a different topic.");
-                    }
+                     throw new Error("AI Refused to Generate (Safety Block). Please try again.");
                 }
 
                 let txt = apiData.candidates[0].content.parts[0].text;
                 
-                // --- ROBUST JSON CLEANUP (The Fix for "Unexpected Token") ---
+                // FIX FOR ERROR #3 (Unexpected Token / JSON)
+                // This logic aggressively finds the start '[' and end ']' of the JSON array
                 const first = txt.indexOf('[');
                 const last = txt.lastIndexOf(']');
                 
@@ -728,6 +748,7 @@
                     throw new Error("AI did not return a valid list of questions. Try again.");
                 }
                 
+                // Cleanly slice ONLY the JSON part, ignoring "Hope this helps" text
                 txt = txt.substring(first, last + 1);
                 
                 try {
@@ -739,19 +760,30 @@
             }
 
             currentExamData = [...reviewQuestions, ...newQuestions];
+            // ... (Rest of the function stays the same)
+
+            currentExamData = [...reviewQuestions, ...newQuestions];
             const typeOrder = { 'SBAQ': 1, 'VSAQ': 2, 'SAQ': 3 };
             currentExamData.sort((a,b) => (typeOrder[a.type] || 99) - (typeOrder[b.type] || 99));
             
             renderExam(currentExamData, 'questions-container', false, hideTags);
             startTimer();
             window.scrollTo(0, 0);
-
-        } catch(e) {
-            showCustomAlert("Generation Error", e.message);
-        } finally {
+        } catch(e) { showCustomAlert("Generation Error", e.message); } finally {
             loading.classList.add('hidden');
             document.getElementById('gen-btn').disabled = false;
         }
+    }
+
+    function startTimer() {
+        let sec = 0; clearInterval(timerInterval);
+        const disp = document.getElementById('timer-display');
+        timerInterval = setInterval(() => {
+            sec++;
+            const m = Math.floor(sec / 60).toString().padStart(2,'0');
+            const s = (sec % 60).toString().padStart(2,'0');
+            disp.innerText = `${m}:${s}`;
+        }, 1000);
     }
 
     // --- RENDERING ---
@@ -760,6 +792,7 @@
         container.innerHTML = '';
         currentMaxScore = 0; 
 
+        // 1. Sidebar & Setup
         const nav = document.getElementById('nav-sidebar');
         nav.innerHTML = '';
         
@@ -773,6 +806,7 @@
             const submitBtn = document.getElementById('submit-btn');
             if(submitBtn) submitBtn.style.display = isSubmitted ? 'none' : 'block';
 
+            // Sidebar Logic
             nav.style.display = 'flex';
             data.forEach((q, i) => {
                 let dotClass = "nav-dot";
@@ -780,14 +814,19 @@
                     if (q.type === 'SAQ') {
                          const cardChecks = document.querySelectorAll(`#card-${i} .mark-point input:checked`);
                          const totalChecks = document.querySelectorAll(`#card-${i} .mark-point input`);
-                         if(totalChecks.length > 0 && cardChecks.length === totalChecks.length) dotClass += " correct";
-                         else if(cardChecks.length > 0) dotClass += " partial";
-                         else dotClass += " wrong";
+                         // Safety check
+                         if(totalChecks.length > 0) {
+                             if(cardChecks.length === totalChecks.length) dotClass += " correct";
+                             else if(cardChecks.length > 0) dotClass += " partial";
+                             else dotClass += " wrong";
+                         } else { dotClass += " wrong"; }
                     } else if (q.activeUserAnswer) {
                         let isCorrect = false;
                         let corr = q.correctAnswer || (q.acceptedAnswers ? q.acceptedAnswers[0] : "");
                         if(q.type === 'SBAQ' && corr) {
-                            if(q.activeUserAnswer.toLowerCase().charAt(0) === corr.toLowerCase().charAt(0)) isCorrect = true;
+                            const cleanSel = q.activeUserAnswer.toLowerCase().replace(/^(option\s+)?[a-e][\.\)\s]\s*/, '');
+                            const cleanCorrect = corr.toLowerCase().replace(/^(option\s+)?[a-e][\.\)\s]\s*/, '');
+                            if(cleanSel === cleanCorrect) isCorrect = true;
                         } else if (q.acceptedAnswers) {
                             if(q.acceptedAnswers.some(a => a.toLowerCase().includes(q.activeUserAnswer.toLowerCase()))) isCorrect = true;
                         }
@@ -798,8 +837,27 @@
                 }
                 nav.innerHTML += `<div class="${dotClass}" id="dot-${i}" onclick="document.getElementById('card-${i}').scrollIntoView({behavior:'smooth'})"><span class="nav-tooltip">Q${i+1}</span></div>`;
             });
-        } else { nav.style.display = 'none'; }
+            
+            // Scroll Spy
+            setTimeout(() => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active-dot'));
+                            const id = entry.target.id.split('-')[1];
+                            const dot = document.getElementById(`dot-${id}`);
+                            if(dot) dot.classList.add('active-dot');
+                        }
+                    });
+                }, {threshold: 0.5});
+                document.querySelectorAll('.q-card').forEach(c => observer.observe(c));
+            }, 100);
 
+        } else {
+            nav.style.display = 'none';
+        }
+
+        // 2. Render Cards
         data.forEach((q, i) => {
             const div = document.createElement('div');
             div.className = 'q-card';
@@ -824,23 +882,26 @@
             };
 
             if(q.type === 'SAQ') {
-                // --- SAFETY PATCH FOR MISSING PARTS ---
+                // --- SAFETY PATCH IS HERE ---
                 if (!q.parts || !Array.isArray(q.parts)) {
-                    contentHTML = `<div style="color:red; background:#fee; padding:10px; border-radius:5px;">⚠️ <strong>AI Generation Error:</strong> This question was incomplete. Please flag it to remove it from your review bank.</div>`;
+                    // If parts are missing, show an error box instead of crashing
+                    contentHTML = `<div style="color:red; background:#fee; padding:10px; border-radius:5px;">⚠️ <strong>AI Generation Error:</strong> This question was incomplete. Please flag it or ignore it.</div>`;
                 } else {
                     currentMaxScore += 10;
                     contentHTML += `<div class="saq-intro">${q.intro || q.question}</div>`;
                     const savedAns = getVal([]); 
                     q.parts.forEach((part, pIndex) => {
                         const val = savedAns[pIndex] || '';
+                        const marks = part.marks || 1;
+                        const models = part.model_answer || [];
                         contentHTML += `
                         <div class="saq-part">
-                            <strong>Part ${pIndex+1} (${part.marks||1} marks)</strong><br>
+                            <strong>Part ${pIndex+1} (${marks} marks)</strong><br>
                             ${part.question}<br>
                             <textarea style="margin-top:10px; height:60px;" placeholder="Type answer..." oninput="autoResize(this)" ${inputAction} ${isDisabled}>${val}</textarea>
                             <div id="saq-mark-${i}-${pIndex}" class="marking-scheme" style="${(isReviewMode || isSubmitted) ? 'display:block' : ''}">
                                 <strong>Model Answer:</strong><br>
-                                ${(part.model_answer||[]).map((point) => `<label class="mark-point"><input type="checkbox" onchange="updateSAQScore(${i})"> ${point}</label>`).join('')}
+                                ${models.map((point) => `<label class="mark-point"><input type="checkbox" onchange="updateSAQScore(${i})"> ${point}</label>`).join('')}
                             </div>
                         </div>`;
                     });
@@ -854,7 +915,9 @@
                     const val = typeof opt === 'string' ? opt : JSON.stringify(opt);
                     const clean = val.replace(/^[A-E]\.\s*/, '').trim();
                     let isChecked = false;
-                    if(userSel) { if(clean.toLowerCase() === userSel.replace(/^[A-E]\.\s*/, '').trim().toLowerCase()) isChecked = true; }
+                    if(userSel) {
+                         if(clean.toLowerCase() === userSel.replace(/^[A-E]\.\s*/, '').trim().toLowerCase()) isChecked = true;
+                    }
                     contentHTML += `<div class="option-item" id="opt-${i}-${optIndex}" style="${isChecked ? 'border-color:var(--brand-primary); background:rgba(0,33,71,0.05);' : ''}">
                             <label><input type="radio" name="q${i}" value="${clean.replace(/"/g, '&quot;')}" ${isChecked?'checked':''} ${isDisabled} ${inputAction}> ${clean}</label>
                             <button class="exclude-btn" onclick="toggleExclusion(${i}, ${optIndex}, event)">✕</button>
@@ -883,20 +946,7 @@
         });
         
         if(!isReviewMode) document.getElementById('header-score-display').innerText = `0/${currentMaxScore}`;
-    }
-
-
-    function startTimer() {
-        let sec = 0; clearInterval(timerInterval);
-        const disp = document.getElementById('timer-display');
-        timerInterval = setInterval(() => {
-            sec++;
-            const m = Math.floor(sec / 60).toString().padStart(2,'0');
-            const s = (sec % 60).toString().padStart(2,'0');
-            disp.innerText = `${m}:${s}`;
-        }, 1000);
-    }
-
+    }  
     function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
     function checkWordCount(i) {
         const inp = document.getElementById(`input-${i}`);
