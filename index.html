@@ -231,7 +231,7 @@
             <div class="form-group">
                 <label>Select Brain</label>
                 <select id="model-select">
-                    <option value="gemini-3-flash-preview" selected>Gemini 3 Flash</option>
+                    <option value="gemini-3-flash" selected>Gemini 3 Flash</option>
                     <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                     <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
                 </select>
@@ -383,7 +383,6 @@
 
     const savedKey = localStorage.getItem('pom_api_key');
     if (savedKey) document.getElementById('api-key').value = savedKey;
-    renderLibrary();
 
     // --- MODULE CONFIG ---
     const MODULES = {
@@ -571,65 +570,6 @@
     let timerInterval;
     let isSubmitted = false;
 
-    // --- UPDATED RENDER LIBRARY (With 'Select All' Checkboxes) ---
-    function renderLibrary() {
-        const container = document.getElementById('library-content');
-        if (!container) return;
-        container.innerHTML = '';
-        
-        // 1. Loop through main Modules (e.g., PoM, BRS)
-        for (const [modName, subModules] of Object.entries(lectureLibrary)) {
-            // Create the big blue header for the Module
-            let html = `<div class="module-section" style="margin-bottom:30px;">
-                <h2 style="color:var(--brand-primary); border-bottom:2px solid #eee; padding-bottom:5px; margin-top:0;">${modName}</h2>`;
-            
-            // 2. Loop through Submodules (e.g., Endocrinology)
-            for (const [subName, lectures] of Object.entries(subModules)) {
-                if (!lectures || lectures.length === 0) continue;
-                
-                // Create a unique ID for this group
-                const groupID = (modName + subName).replace(/[^a-zA-Z0-9]/g, '');
-                
-                html += `
-                <div class="submodule-group" style="margin-left:10px; margin-bottom:25px;">
-                    <div style="display:flex; align-items:center; gap:10px; background:#f8f9fa; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #eee;">
-                        <input type="checkbox" id="group-${groupID}" 
-                               onchange="toggleGroup('${groupID}', this)" 
-                               style="width:20px; height:20px; cursor:pointer; accent-color:var(--brand-primary);">
-                        <label for="group-${groupID}" style="margin:0; color:#333; font-weight:700; font-size:1.1rem; cursor:pointer;">
-                            ${subName} <span style="font-weight:400; font-size:0.85rem; color:#666; margin-left:5px;">(Select All)</span>
-                        </label>
-                    </div>
-
-                    <div class="lecture-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:10px; padding-left:10px;">`;
-                
-                // 3. Loop through Lectures
-                lectures.forEach((lec, i) => {
-                    html += `
-                    <label class="lib-card" style="display:flex; gap:12px; align-items:center; background:white; padding:12px; border:1px solid #eee; border-radius:6px; cursor:pointer; transition:all 0.2s;">
-                        <input type="checkbox" class="lib-check group-${groupID}" 
-                               data-mod="${modName}" 
-                               data-sub="${subName}" 
-                               data-idx="${i}"
-                               style="width:18px; height:18px; accent-color:var(--brand-secondary); flex-shrink:0;">
-                        <span style="font-size:0.95rem; line-height:1.4; color:#444;">${lec.name}</span>
-                    </label>`;
-                });
-                
-                html += `</div></div>`;
-            }
-            html += `</div>`;
-            container.innerHTML += html;
-        }
-    }
-
-    // --- HELPER TO CLICK ALL BOXES ---
-    function toggleGroup(groupID, source) {
-        document.querySelectorAll(`.group-${groupID}`).forEach(cb => {
-            cb.checked = source.checked;
-        });
-    }
-
    async function generateExam() {
         const loading = document.getElementById('loading');
         loading.classList.remove('hidden');
@@ -684,43 +624,32 @@
                         }
                         hasContent = true;
                     }
-                // ... inside generateExam ...
                 } else {
-                    // --- UPDATED LIBRARY GATHERING LOGIC ---
                     const checkboxes = document.querySelectorAll('.lib-check:checked');
                     for(let cb of checkboxes) {
-                        // We now read Module (mod), Submodule (sub), and Index (idx)
-                        const mod = cb.dataset.mod;
-                        const sub = cb.dataset.sub;
+                        const cat = cb.dataset.cat;
                         const idx = cb.dataset.idx;
-                        
-                        // Safety check to ensure the lecture exists in the library
-                        if(lectureLibrary[mod] && lectureLibrary[mod][sub] && lectureLibrary[mod][sub][idx]) {
-                            const lecture = lectureLibrary[mod][sub][idx];
-                            
-                            if (lecture.files && Array.isArray(lecture.files)) {
-                                for(let fileUrl of lecture.files) {
-                                    try {
-                                        const resp = await fetch(fileUrl);
-                                        const blob = await resp.blob();
-                                        const name = fileUrl.split('/').pop().toLowerCase();
-                                        
-                                        if(name.endsWith('.pptx') || name.endsWith('.docx')) {
-                                            const res = await processPPTX(blob, name);
-                                            parts.push({text: res.text});
-                                            parts.push(...res.imgs);
-                                        } else {
-                                            const b64 = await blobToBase64(blob);
-                                            parts.push({ inline_data: { mime_type: blob.type, data: b64 } });
-                                        }
-                                        hasContent = true;
-                                    } catch(e) { console.error("Cloud file load failed:", fileUrl); }
-                                }
+                        const lecture = lectureLibrary[cat][idx];
+                        if (lecture.files && Array.isArray(lecture.files)) {
+                            for(let fileUrl of lecture.files) {
+                                try {
+                                    const resp = await fetch(fileUrl);
+                                    const blob = await resp.blob();
+                                    const name = fileUrl.split('/').pop().toLowerCase();
+                                    if(name.endsWith('.pptx') || name.endsWith('.docx')) {
+                                        const res = await processPPTX(blob, name);
+                                        parts.push({text: res.text});
+                                        parts.push(...res.imgs);
+                                    } else {
+                                        const b64 = await blobToBase64(blob);
+                                        parts.push({ inline_data: { mime_type: blob.type, data: b64 } });
+                                    }
+                                    hasContent = true;
+                                } catch(e) { console.error("Cloud file load failed:", fileUrl); }
                             }
                         }
                     }
                 }
-                // ... rest of function ...
 
                 if(!hasContent) throw new Error("Please upload files or select lectures from the library.");
 
@@ -954,18 +883,6 @@
         });
         
         if(!isReviewMode) document.getElementById('header-score-display').innerText = `0/${currentMaxScore}`;
-    }
-
-
-    function startTimer() {
-        let sec = 0; clearInterval(timerInterval);
-        const disp = document.getElementById('timer-display');
-        timerInterval = setInterval(() => {
-            sec++;
-            const m = Math.floor(sec / 60).toString().padStart(2,'0');
-            const s = (sec % 60).toString().padStart(2,'0');
-            disp.innerText = `${m}:${s}`;
-        }, 1000);
     }
 
     function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
@@ -1391,27 +1308,7 @@
     a.click();
 }
   
-    // --- INITIALIZATION ---
-    window.onload = async function() {
-        try {
-            // 1. Load the Library
-            const response = await fetch('library.json');
-            lectureLibrary = await response.json();
-            
-            // 2. Render the Library (THIS IS THE MISSING CALL)
-            renderLibrary();
-            
-            // 3. Load API Key if saved
-            const savedKey = localStorage.getItem('pom_api_key');
-            if(savedKey) document.getElementById('api-key').value = savedKey;
-            
-        } catch (e) {
-            console.error("Failed to load library:", e);
-            document.getElementById('library-content').innerHTML = 
-                `<div style="color:red; padding:20px;">Error loading library.json. Please check the file exists.</div>`;
-        }
-    };
-
+    
     function closeGenericModal() { document.getElementById('generic-modal').style.display = 'none'; }
 </script>
 </body>
